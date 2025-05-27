@@ -1,0 +1,30 @@
+.margin {
+  width: 100%;
+  height: 10%;
+}
+
+.link-red {
+  color: #53070c;
+  font-family: 'Inter-Regular', Helvetica;
+  font-size: 12.1px;
+  font-weight: 400;
+}
+
+.form-link-register {
+  width: 100%;
+  text-align: center;
+}
+
+.form-link-forget {
+  width: 100%;
+  text-align: right;
+}
+
+.error {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #a50e18;
+  font-style: oblique;
+  width: 100%;
+  text-align: center;
+}

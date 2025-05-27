@@ -1,0 +1,13 @@
+main {
+  padding-top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+.Message {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-size: 14px;
+  color: rgb(116, 116, 116);
+  text-align: center;
+  width: 100%;
+}
