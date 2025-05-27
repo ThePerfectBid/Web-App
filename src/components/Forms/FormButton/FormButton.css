@@ -1,0 +1,33 @@
+.button {
+  all: unset;
+  background-color: #df360c;
+  border-radius: 12px;
+  box-sizing: border-box;
+  height: 10%;
+  width: 100%;
+  margin: 0 auto;
+  color: #ffffff;
+  font-family: 'Inter-SemiBold', Helvetica;
+  font-size: 12.1px;
+  font-weight: 600;
+  padding: 2%;
+  letter-spacing: 0;
+  line-height: normal;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 4%;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: #e06e51;
+}
+
+.button--disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.button--disabled:hover {
+  background-color: #cccccc;
+}

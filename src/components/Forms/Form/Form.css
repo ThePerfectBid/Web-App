@@ -1,0 +1,53 @@
+.form-small {
+  height: 65%;
+  width: 35%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flow;
+  padding: 2.5%;
+  margin: 0 auto;
+  max-width: 600px;
+  max-height: 450px;
+  min-width: 400px;
+  min-height: 425px;
+}
+
+.form-middle {
+  height: 60%;
+  width: 30%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flow;
+  padding: 2.5%;
+  margin: 0 auto;
+  max-width: 600px;
+  max-height: 450px;
+  min-width: 400px;
+  min-height: 425px;
+}
+
+.form-large {
+  height: 400px;
+  width: 40%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flow;
+  padding: 2.5%;
+  margin: 0 auto;
+  max-width: 600px;
+  max-height: 600px;
+  min-width: 400px;
+  min-height: 425px;
+}
+
+form h3 {
+  font-size: 20px;
+  color: rgb(97, 36, 36);
+  width: 100%;
+  text-align: center;
+  height: 5%;
+  margin-bottom: 5%;
+}
