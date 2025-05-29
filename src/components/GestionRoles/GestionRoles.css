@@ -1,0 +1,38 @@
+.gestion-roles-container {
+  width: 80%;
+  height: 90%;
+  background-color: rgb(255, 255, 255);
+  margin: 0 auto;
+  margin-top: 2.5%;
+  border-radius: 10px;
+  padding: 5%;
+  padding-top: 2.5%;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva,
+    Verdana, sans-serif;
+}
+
+.content-roles {
+  overflow-y: scroll;
+  height: 90%;
+}
+
+.content-roles::-webkit-scrollbar {
+  display: none;
+}
+
+.header h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.users {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.users h3 {
+  color: #444;
+  margin-bottom: 15px;
+}
