@@ -5,6 +5,7 @@ import Register from "../Register/Register";
 import Profile from "../Profile/Profile";
 import Menu from "../Menu/Menu";
 import ForgotPassword from "../ForgotPassword/ForgotPassword";
+import GestionRoles from "../GestionRoles/GestionRoles";
 import { AuthProvider } from "../context/AuthContext";
 import { ProtectedRoute } from "./ProtectedRoute";
 import ErrorPage from "../Error/ErrorPage";
@@ -36,7 +37,15 @@ const AppRoutes = () => {
           <Outlet />
         </ProtectedRoute>
       ),
-      children: [{ path: "perfil", element: <Profile /> }],
+      children: [
+        { path: "perfil", element: <Profile /> },
+
+        // Ruta protegida con rol específico
+        {
+          path: "gestion-roles",
+          element: <GestionRoles />,
+        },
+      ],
     },
 
     // Redirección para rutas no encontradas
