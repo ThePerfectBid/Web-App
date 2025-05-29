@@ -1,0 +1,76 @@
+/* NotFound.css */
+
+.not-found-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding: 20px;
+  text-align: center;
+}
+
+.not-found-content {
+  max-width: 600px;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.error-code {
+  font-size: 120px;
+  font-weight: 800;
+  color: #e63946;
+  line-height: 1;
+  margin-bottom: 20px;
+  background: linear-gradient(145deg, #e63946, #a8dadc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.error-title {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: #2b2d42;
+}
+
+.error-message {
+  font-size: 18px;
+  color: #6c757d;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.home-button {
+  background-color: #457b9d;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.home-button:hover {
+  background-color: #1d3557;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(29, 53, 87, 0.2);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .error-code {
+    font-size: 80px;
+  }
+
+  .error-title {
+    font-size: 24px;
+  }
+
+  .error-message {
+    font-size: 16px;
+  }
+}
