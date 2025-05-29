@@ -87,31 +87,26 @@ export default function Register(params: any) {
         return;
       }
 
-      //aqui va el post
-      /*
-    const response = await fetch('https://localhost:xxxx/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        lastName,
-        email,
-        address,
-        phone,
-        password,
-        role: selectedRol
-      })
-    });
+      const response = await fetch("https://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          lastName,
+          email,
+          address,
+          phone,
+          password,
+          role: selectedRol,
+        }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error en el registro');
-    }
-
-    const data = await response.json();
-    */
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error en el registro");
+      }
 
       // Redirigir después de registro exitoso
       navigate("/");

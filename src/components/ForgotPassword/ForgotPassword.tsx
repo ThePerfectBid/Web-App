@@ -8,7 +8,6 @@ import { useState } from "react";
 export default function ForgotPassword() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
   const [pulsedButton, setPulsedButton] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -17,12 +16,7 @@ export default function ForgotPassword() {
     return emailRegex.test(email);
   };
 
-  const validateCode = (code: string): boolean => {
-    const codeRegex = /^\d{6}$/; // Asumiendo que el código es de 6 dígitos
-    return codeRegex.test(code);
-  };
-
-  const handleClick = () => {
+  const handleClick = async () => {
     setErrorMessage(""); // Limpiar mensajes anteriores
 
     if (!email) {
@@ -35,6 +29,21 @@ export default function ForgotPassword() {
       return;
     }
 
+    const response = await fetch(
+      `https://localhost:44335/reset-password/${email}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error en el envio del correo");
+    }
+
     setPulsedButton(true);
     setErrorMessage(""); // Limpiar mensaje si pasa validación
   };
@@ -42,18 +51,6 @@ export default function ForgotPassword() {
   const continueClick = () => {
     setErrorMessage(""); // Limpiar mensajes anteriores
 
-    if (!code) {
-      setErrorMessage("El código de verificación es requerido");
-      return;
-    }
-
-    if (!validateCode(code)) {
-      setErrorMessage("El código debe contener exactamente 6 dígitos");
-      return;
-    }
-
-    // Aquí va la petición al endpoint del API Gateway
-    // Si la petición es exitosa:
     navigate("/");
   };
 
@@ -73,27 +70,18 @@ export default function ForgotPassword() {
           value={email}
         />
 
-        {pulsedButton && (
-          <Field
-            name="Código de verificación"
-            placeHolder="123456"
-            value={code}
-            setValue={setCode}
-          />
-        )}
-
         {/* Mensaje de error antes del botón */}
         {errorMessage && <div className="error">{errorMessage}</div>}
 
         {!pulsedButton && (
-          <FormButton text="Enviar código" handle={handleClick} />
+          <FormButton text="Enviar correo" handle={handleClick} />
         )}
 
         {pulsedButton && <FormButton text="Continuar" handle={continueClick} />}
 
         {pulsedButton && (
           <p className="Message">
-            Se ha enviado un código al correo electrónico
+            Se ha enviado un mensaje al correo electrónico
           </p>
         )}
       </Form>
