@@ -5,6 +5,7 @@ import ProfileElement from "./ProfileElement/ProfileElement";
 import ModifyPassword from "./ModifyPassword/ModifyPassword";
 import { useAuth } from "../context/AuthContext";
 import { authService } from "../services/authService";
+import HistorialActividad from "./HistorialActividad/HistorialActividad";
 
 interface Persona {
   id: string;
@@ -166,6 +167,7 @@ export default function Profile() {
             </button>
           </div>
         </div>
+        <HistorialActividad />
       </div>
       {modifyForm && (
         <ModifyForm
