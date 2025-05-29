@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import Menu from "../Menu/Menu";
+import ModifyForm from "./ModifyForm/ModifyForm";
 import "./Profile.css";
 import ProfileElement from "./ProfileElement/ProfileElement";
+import ModifyPassword from "./ModifyPassword/ModifyPassword";
 import { useAuth } from "../context/AuthContext";
 import { authService } from "../services/authService";
 
@@ -65,16 +66,16 @@ export default function Profile() {
           throw new Error("Error al obtener roles");
         }
         const data = await response.json();
+        const data2 = await res.json();
         const currentUser = data.find(
           (prof: any) => prof.id === userData?.userId
         );
 
         if (!currentUser) {
           throw new Error("User not found");
-        }
+        }*/
 
-        setPersona(currentUser);*/
-        setPersona(personNueva);
+        setPersona(personNueva); // Usamos los datos simulados en lugar de currentUser
         setRole("Subastador");
       } catch (error) {
         console.error("Error fetcheando roles:", error);
@@ -147,6 +148,11 @@ export default function Profile() {
                 content={""}
                 icon="/location.svg"
               />
+              <ProfileElement
+                title="Fecha de ingreso"
+                content={""}
+                icon="/calendar.svg"
+              />
             </div>
           </div>
 
@@ -161,6 +167,21 @@ export default function Profile() {
           </div>
         </div>
       </div>
+      {modifyForm && (
+        <ModifyForm
+          nombre={persona.name}
+          apellido={persona.lastName}
+          fechaNacimiento={""}
+          correo={persona.email}
+          telefono={""}
+          direccion={""}
+          fechaIngreso={""}
+          setModifyForm={setModifyForm}
+        />
+      )}
+      {modifyPassword && (
+        <ModifyPassword setModifyPassword={setModifyPassword} />
+      )}
     </>
   );
 }
