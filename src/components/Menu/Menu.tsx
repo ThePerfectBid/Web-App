@@ -20,7 +20,7 @@ export default function Menu() {
           </button>
         </Link>
 
-        <Link to="" className="icon-button">
+        <Link to="/perfil" className="icon-button">
           <img src="/userprofile.svg" alt="Profile" />
         </Link>
       </div>
