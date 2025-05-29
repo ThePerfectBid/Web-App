@@ -14,12 +14,12 @@ export default function Menu() {
         <MenuElement text="Gestión de subastas" icon="/Marketplace.png" />
       </div>
       <div className="settings">
-        <Link to="">
+        <Link to="/gestion-roles">
           <button className="icon-button">
             <img src="/setting.svg" alt="Settings" />
           </button>
         </Link>
-        {/* Botón de perfil que lleva a /Perfil */}
+
         <Link to="" className="icon-button">
           <img src="/userprofile.svg" alt="Profile" />
         </Link>

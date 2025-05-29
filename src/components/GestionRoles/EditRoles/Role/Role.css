@@ -1,0 +1,43 @@
+.role-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+}
+
+.role-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.role-card h4 {
+  color: #333;
+  font-size: 13px;
+  width: 90%;
+}
+
+.role-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.role-actions button {
+  padding: 3px 6px;
+  font-size: 11px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.role-actions button:first-child {
+  background: #810909;
+  color: white;
+}
+
+.role-actions button:first-child:hover {
+  background: #a73d3d;
+}
