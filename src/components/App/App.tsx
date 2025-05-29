@@ -2,6 +2,7 @@ import LogIn from "../LogIn/LogIn";
 import { BrowserRouter, useRoutes, Outlet, Navigate } from "react-router-dom";
 import "./App.css";
 import Register from "../Register/Register";
+import Profile from "../Profile/Profile";
 import Menu from "../Menu/Menu";
 import ForgotPassword from "../ForgotPassword/ForgotPassword";
 import { AuthProvider } from "../context/AuthContext";
@@ -12,6 +13,7 @@ const AppRoutes = () => {
   let element = useRoutes([
     // Rutas públicas
     { path: "/", element: <LogIn /> },
+    { path: "/login", element: <LogIn /> },
     { path: "/register", element: <Register /> },
     { path: "/forgot-password", element: <ForgotPassword /> },
     {
@@ -34,7 +36,7 @@ const AppRoutes = () => {
           <Outlet />
         </ProtectedRoute>
       ),
-      children: [],
+      children: [{ path: "perfil", element: <Profile /> }],
     },
 
     // Redirección para rutas no encontradas
