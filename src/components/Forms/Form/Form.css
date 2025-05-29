@@ -29,7 +29,7 @@
 }
 
 .form-large {
-  height: 400px;
+  height: 450px;
   width: 40%;
   background-color: white;
   border-radius: 10px;
@@ -40,7 +40,7 @@
   max-width: 600px;
   max-height: 600px;
   min-width: 400px;
-  min-height: 425px;
+  min-height: 450px;
 }
 
 form h3 {
