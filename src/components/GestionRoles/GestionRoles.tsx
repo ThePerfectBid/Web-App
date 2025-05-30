@@ -28,7 +28,7 @@ export default function GestionRoles() {
         const token = authService.getToken();
         // Petición al endpoint para obtener todos los roles
         const response = await fetch(
-          "http://localhost:5028/api/users/GetallRoles",
+          "http://localhost:8085/api/users/GetallRoles",
           {
             method: "GET",
             headers: {
