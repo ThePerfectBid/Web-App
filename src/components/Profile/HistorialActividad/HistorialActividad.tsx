@@ -61,18 +61,14 @@ export default function HistorialActividad() {
   // Obtener años únicos
   const anosUnicos = [
     ...new Set(
-      actividades.map((item) =>
-        new Date(item.timestamp.getFullYear()).getFullYear().toString()
-      )
+      actividades.map((item) => item.timestamp.getFullYear().toString())
     ),
   ];
 
   // Obtener meses únicos
   const mesesUnicos = [
     ...new Set(
-      actividades.map((item) =>
-        (new Date(item.timestamp.getDate()).getMonth() + 1).toString()
-      )
+      actividades.map((item) => (item.timestamp.getMonth() + 1).toString())
     ),
   ];
 
