@@ -38,7 +38,7 @@ export default function RoleModifyForm({
 
         // Obtener todos los permisos disponibles
         const permisosResponse = await fetch(
-          "http://localhost:8085/api/permissions",
+          "http://localhost:8085/api/users/permissions",
           {
             method: "GET",
             headers: {
@@ -55,7 +55,7 @@ export default function RoleModifyForm({
 
         // Obtener permisos actuales del rol
         const rolPermisosResponse = await fetch(
-          `http://localhost:8085/api/roles/${roleId}/permissions`,
+          `http://localhost:8085/api/users/${roleId}/permissions`,
           {
             method: "GET",
             headers: {
@@ -121,7 +121,7 @@ export default function RoleModifyForm({
       // Enviar permisos a agregar
       for (const permisoId of permisosToAdd) {
         const response = await fetch(
-          `http://localhost:8085/api/roles/${roleId}/permissions/${permisoId}`,
+          `http://localhost:8085/api/users/${roleId}/permissions/${permisoId}`,
           {
             method: "POST",
             headers: {
@@ -139,7 +139,7 @@ export default function RoleModifyForm({
       // Enviar permisos a eliminar
       for (const permisoId of permisosToRemove) {
         const response = await fetch(
-          `http://localhost:8085/api/roles/${roleId}/permissions/${permisoId}`,
+          `http://localhost:8085/api/users/${roleId}/permissions/${permisoId}`,
           {
             method: "DELETE",
             headers: {
