@@ -33,12 +33,12 @@ export default function RoleModifyForm({
       try {
         const token = authService.getToken();
         if (!token) {
-          throw new Error("No authentication token found");
+          throw new Error("No se encontró token de autenticación");
         }
 
         // Obtener todos los permisos disponibles
         const permisosResponse = await fetch(
-          "http://localhost:8085/api/users/allPermissions",
+          "http://localhost:8085/api/permissions",
           {
             method: "GET",
             headers: {
@@ -55,7 +55,7 @@ export default function RoleModifyForm({
 
         // Obtener permisos actuales del rol
         const rolPermisosResponse = await fetch(
-          `http://localhost:8085/api/users/${roleId}/permissions`,
+          `http://localhost:8085/api/roles/${roleId}/permissions`,
           {
             method: "GET",
             headers: {
@@ -73,9 +73,9 @@ export default function RoleModifyForm({
         setAllPermisos(permisosData);
         const currentPermisoIds = rolPermisosData.map((p) => p.id);
         setCurrentPermisos(currentPermisoIds);
-        setSelectedPermisos(currentPermisoIds); // Inicialmente seleccionados
+        setSelectedPermisos(currentPermisoIds);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error al cargar datos:", error);
         setError(error instanceof Error ? error.message : "Error desconocido");
       } finally {
         setIsLoading(false);
@@ -108,18 +108,20 @@ export default function RoleModifyForm({
         throw new Error("No se encontró token de autenticación");
       }
 
-      // Determinar permisos a agregar y eliminar
+      // Determinar permisos a agregar (seleccionados que no estaban)
       const permisosToAdd = selectedPermisos.filter(
         (id) => !currentPermisos.includes(id)
       );
+
+      // Determinar permisos a eliminar (estaban pero no están seleccionados)
       const permisosToRemove = currentPermisos.filter(
         (id) => !selectedPermisos.includes(id)
       );
 
-      // Enviar cambios al backend
-      const addPromises = permisosToAdd.map((permisoId) =>
-        fetch(
-          `http://localhost:8085/api/users/${roleId}/add-permission/${permisoId}`,
+      // Enviar permisos a agregar
+      for (const permisoId of permisosToAdd) {
+        const response = await fetch(
+          `http://localhost:8085/api/roles/${roleId}/permissions/${permisoId}`,
           {
             method: "POST",
             headers: {
@@ -127,12 +129,17 @@ export default function RoleModifyForm({
               Authorization: `Bearer ${token}`,
             },
           }
-        )
-      );
+        );
 
-      const removePromises = permisosToRemove.map((permisoId) =>
-        fetch(
-          `http://localhost:8085/api/users/${roleId}/remove-permission/${permisoId}`,
+        if (!response.ok) {
+          throw new Error(`Error al agregar permiso ${permisoId}`);
+        }
+      }
+
+      // Enviar permisos a eliminar
+      for (const permisoId of permisosToRemove) {
+        const response = await fetch(
+          `http://localhost:8085/api/roles/${roleId}/permissions/${permisoId}`,
           {
             method: "DELETE",
             headers: {
@@ -140,17 +147,19 @@ export default function RoleModifyForm({
               Authorization: `Bearer ${token}`,
             },
           }
-        )
-      );
+        );
 
-      // Esperar a que todas las operaciones terminen
-      await Promise.all([...addPromises, ...removePromises]);
+        if (!response.ok) {
+          throw new Error(`Error al eliminar permiso ${permisoId}`);
+        }
+      }
 
       setShowConfirmation(false);
       setModifyForm(false);
     } catch (error) {
-      console.error("Error al guardar permisos:", error);
-      setError("Error al actualizar los permisos");
+      console.error("Error al actualizar permisos:", error);
+      setError("Error al guardar los cambios. Intente nuevamente.");
+      setShowConfirmation(false);
     }
   };
 
@@ -163,7 +172,7 @@ export default function RoleModifyForm({
     permiso.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (isLoading) return <div>Cargando permisos...</div>;
+  if (isLoading) return <div className="loading">Cargando permisos...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
   return (
@@ -176,8 +185,8 @@ export default function RoleModifyForm({
           setModifyForm={setModifyForm}
         >
           <FormCard
-            cardTitle="Seleccione permisos para el rol"
-            text="Por favor selecciona los permisos deseados para el rol"
+            cardTitle="Gestión de permisos del rol"
+            text="Marque/desmarque los permisos según sea necesario"
           />
 
           <div className="Form-content">
@@ -221,8 +230,23 @@ export default function RoleModifyForm({
         <div className="confirmation-overlay">
           <div className="confirmation-box">
             <h4>¿Confirmar cambios?</h4>
-            <br />
-            <p>¿Estás seguro de que deseas actualizar los permisos del Rol?</p>
+            <p>Se aplicarán los siguientes cambios:</p>
+            <ul className="changes-list">
+              {selectedPermisos
+                .filter((id) => !currentPermisos.includes(id))
+                .map((id) => (
+                  <li key={`add-${id}`}>
+                    [+] Agregar: {allPermisos.find((p) => p.id === id)?.name}
+                  </li>
+                ))}
+              {currentPermisos
+                .filter((id) => !selectedPermisos.includes(id))
+                .map((id) => (
+                  <li key={`remove-${id}`}>
+                    [-] Eliminar: {allPermisos.find((p) => p.id === id)?.name}
+                  </li>
+                ))}
+            </ul>
             <div className="confirmation-buttons">
               <FormButton text="Confirmar" handle={confirmChanges} />
               <FormButton text="Cancelar" handle={cancelChanges} />

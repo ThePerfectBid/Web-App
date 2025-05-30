@@ -30,7 +30,7 @@ export default function ForgotPassword() {
     }
 
     const response = await fetch(
-      `https://localhost:44335/reset-password/${email}`,
+      `http://localhost:44335/reset-password/${email}`,
       {
         method: "POST",
         headers: {
