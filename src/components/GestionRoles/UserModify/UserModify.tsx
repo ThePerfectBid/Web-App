@@ -3,7 +3,6 @@ import { Form } from "../../Forms/Form/Form";
 import FormCard from "../../Forms/FormCard/FormCard";
 import FormButton from "../../Forms/FormButton/FormButton";
 import "./UserModify.css";
-import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/authService";
 
 interface Rol {
@@ -13,31 +12,29 @@ interface Rol {
 
 interface UserModifyProps {
   setModifyForm: (value: boolean) => void;
-  userEmail: string; // Email del usuario que se está modificando
-  userId: string; // ID del usuario para la petición al backend
+  userEmail: string;
+  userId: string;
 }
 
 export default function UserModify({
   setModifyForm,
   userEmail,
+  userId,
 }: UserModifyProps) {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRolId, setSelectedRolId] = useState<string>("");
   const [roles, setRoles] = useState<Rol[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { userData } = useAuth();
 
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        //Obtener token
         const token = authService.getToken();
         if (!token) {
           throw new Error("No authentication token found");
         }
-        //Hacer fetch al rol utilizando el roleID del user Data
-        // Petición al endpoint para obtener todos los roles
+
         const response = await fetch(
           "http://localhost:8085/api/users/GetallRoles",
           {
@@ -48,12 +45,12 @@ export default function UserModify({
             },
           }
         );
+
         if (!response.ok) {
           throw new Error("Error al obtener roles");
         }
-        //mandarle el token
-        const data: Rol[] = await response.json();
 
+        const data: Rol[] = await response.json();
         setRoles(data);
       } catch (error) {
         console.error("Error fetching roles:", error);
@@ -87,7 +84,7 @@ export default function UserModify({
       }
 
       const response = await fetch(
-        `http://localhost:8085/api/users/updaterole/${userData?.userId}`,
+        `http://localhost:8085/api/users/updaterole/${userId}`,
         {
           method: "PUT",
           headers: {
@@ -114,10 +111,12 @@ export default function UserModify({
     setShowConfirmation(false);
   };
 
-  // Filtrar roles según término de búsqueda
-  const filteredRoles = roles.filter((rol) =>
-    rol.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filtrar roles según término de búsqueda (versión segura)
+  const filteredRoles = roles.filter((rol) => {
+    const nombreRol = rol.nombre?.toString() || "";
+    const terminoBusqueda = searchTerm?.toString() || "";
+    return nombreRol.toLowerCase().includes(terminoBusqueda.toLowerCase());
+  });
 
   if (isLoading) return <div>Cargando roles...</div>;
 
@@ -162,7 +161,7 @@ export default function UserModify({
                   </div>
                 ))
               ) : (
-                <p>No se encontraron roles</p>
+                <p className="error">No se encontraron roles</p>
               )}
             </div>
           </div>
