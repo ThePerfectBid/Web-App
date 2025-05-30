@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./EditUsers.css";
-import User, { UserI } from "./User/User";
+import User, { type UserI } from "./User/User";
 
 interface UsersProps {
   setEditUser: (value: boolean) => void;
