@@ -55,13 +55,13 @@ export default function Profile() {
 
         setPersona(data);
 
-        if (persona?.roleId === "6818b9e5035415cfcd8aa231") {
+        if (data?.roleId === "6818b9e5035415cfcd8aa231") {
           setRole("Postor");
-        } else if (persona?.roleId === "6818b7af035415cfcd8aa22a") {
+        } else if (data?.roleId === "6818b7af035415cfcd8aa22a") {
           setRole("Subastador");
-        } else if (persona?.roleId === "6818bd0b035415cfcd8aa238") {
+        } else if (data?.roleId === "6818bd0b035415cfcd8aa238") {
           setRole("Soporte tecnico");
-        } else if (persona?.roleId === "6818b6ff035415cfcd8aa229") {
+        } else if (data?.roleId === "6818b6ff035415cfcd8aa229") {
           setRole("Administrador");
         }
       } catch (error) {
@@ -103,7 +103,6 @@ export default function Profile() {
           {/* Header Section (15%) */}
           <div className="header">
             <h2>Mi Perfil</h2>
-            <p>{role}</p>
           </div>
 
           {/* Profile Section (25%) */}
@@ -153,7 +152,6 @@ export default function Profile() {
         <ModifyForm
           nombre={persona.name}
           apellido={persona.lastName}
-          correo={persona.email}
           telefono={persona.phone}
           direccion={persona.address}
           setModifyForm={setModifyForm}

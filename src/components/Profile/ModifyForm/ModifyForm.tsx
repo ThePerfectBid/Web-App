@@ -10,7 +10,6 @@ import { useAuth } from "../../context/AuthContext";
 interface ProfileData {
   name: string;
   lastName: string;
-  email: string;
   phone: string;
   address: string;
 }
@@ -19,7 +18,6 @@ interface FloatingFormProps {
   setModifyForm: (value: boolean) => void;
   nombre: string;
   apellido: string;
-  correo: string;
   telefono: string;
   direccion: string;
 }
@@ -28,7 +26,6 @@ export default function ModifyForm({
   setModifyForm,
   nombre,
   apellido,
-  correo,
   telefono,
   direccion,
 }: FloatingFormProps) {
@@ -36,7 +33,6 @@ export default function ModifyForm({
   const [profileData, setProfileData] = useState<ProfileData>({
     name: nombre,
     lastName: apellido,
-    email: correo,
     phone: telefono,
     address: direccion,
   });
@@ -63,14 +59,13 @@ export default function ModifyForm({
       const dataToSend: ProfileData = {
         name: profileData.name,
         lastName: profileData.lastName,
-        email: profileData.email,
         phone: profileData.phone,
         address: profileData.address,
       };
 
       // Enviar todos los permisos seleccionados en una sola petición POST
       const responseAdd = await fetch(
-        `http://localhost:5028/api/update/${userData?.userId}`,
+        `http://localhost:8085/api/update/${userData?.userId}`,
         {
           method: "POST",
           headers: {
@@ -121,12 +116,6 @@ export default function ModifyForm({
               placeHolder="Tu apellido"
               value={profileData.lastName}
               setValue={handleInputChange("lastName")}
-            />
-            <Field
-              name="Correo electrónico"
-              placeHolder="correo electrónico"
-              value={profileData.email}
-              setValue={handleInputChange("email")}
             />
 
             <Field
