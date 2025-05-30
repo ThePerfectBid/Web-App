@@ -34,7 +34,10 @@ export default function UserModify({
     const fetchRoles = async () => {
       try {
         //Obtener token
-        // const token = authService.getToken()
+        const token = authService.getToken();
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
         //Hacer fetch al rol utilizando el roleID del user Data
         // Petición al endpoint para obtener todos los roles
         /*  const response = await fetch('http://localhost:5028/api/users/GetallRoles', {
@@ -84,6 +87,8 @@ export default function UserModify({
 
   const confirmChanges = async () => {
     try {
+      const email = userData?.email;
+      console.log(email);
       //const token = authService.getToken()
       /*
       await fetch(`/api/users/${userId}/role`, {
