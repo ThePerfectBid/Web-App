@@ -22,25 +22,22 @@ export default function EditRoles({ setEditRole, setMarked }: EditRolesProps) {
         if (!token) {
           throw new Error("No authentication token found");
         }
-        /*
-        const response = await fetch('http://localhost:5028/api/users/GetallRoles', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+
+        const response = await fetch(
+          "http://localhost:8085/api/users/GetallRoles",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
-          throw new Error('Error al obtener roles')
+          throw new Error("Error al obtener roles");
         }
 
-        const data = await response.json()*/
-        //setAllRoles(data)
-        const data: RoleI[] = [
-          { id: "1", name: "Administrador" },
-          { id: "2", name: "Postor" },
-          { id: "3", name: "Subastador" },
-          { id: "4", name: "Soporte" },
-        ];
+        const data = await response.json();
+
         setAllRoles(data);
       } catch (err) {
         console.error("Error fetching roles:", err);

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import "./HistorialActividad.css";
+import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/authService";
 
 type Actividad = {
   id: number;
-  nombre: string;
-  tipo: "inicio_sesion" | "actualizacion_perfil" | "cambio_contrasena";
-  fecha: string;
-  hora: string;
+  userId: string;
+  action: "LOGIN" | "USER_UPDATED" | "PASSWORD_CHANGED";
+  timestamp: string; // Recibimos string ISO desde .NET
 };
 
 export default function HistorialActividad() {
@@ -15,112 +15,58 @@ export default function HistorialActividad() {
   const [filtroFecha, _setFiltroFecha] = useState<string>("todos");
   const [filtroAno, setFiltroAno] = useState<string>("todos");
   const [filtroMes, setFiltroMes] = useState<string>("todos");
+  const { userData } = useAuth();
   const [actividades, setActividades] = useState<Actividad[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Datos simulados para cuando no hay conexión o mientras se desarrolla
-  const historialActividadSimulado: Actividad[] = [
-    {
-      id: 1,
-      nombre: "Inicio de sesión desde dispositivo móvil",
-      tipo: "inicio_sesion",
-      fecha: "2023-05-15",
-      hora: "09:30",
-    },
-    {
-      id: 2,
-      nombre: "Actualización de información personal",
-      tipo: "actualizacion_perfil",
-      fecha: "2023-05-14",
-      hora: "14:15",
-    },
-    {
-      id: 3,
-      nombre: "Cambio de contraseña",
-      tipo: "cambio_contrasena",
-      fecha: "2023-05-12",
-      hora: "11:45",
-    },
-    {
-      id: 4,
-      nombre: "Inicio de sesión desde navegador Chrome",
-      tipo: "inicio_sesion",
-      fecha: "2023-05-10",
-      hora: "16:20",
-    },
-    {
-      id: 5,
-      nombre: "Actualización de foto de perfil",
-      tipo: "actualizacion_perfil",
-      fecha: "2023-05-08",
-      hora: "10:00",
-    },
-    {
-      id: 6,
-      nombre: "Inicio de sesión desde dispositivo móvil",
-      tipo: "inicio_sesion",
-      fecha: "2023-05-05",
-      hora: "08:15",
-    },
-    {
-      id: 7,
-      nombre: "Cambio de contraseña",
-      tipo: "cambio_contrasena",
-      fecha: "2023-05-01",
-      hora: "13:30",
-    },
-  ];
-
-  //colocar useEffect que utilice authService.getToken(), si el token es valido realice peticion al endpoint para obtener la lista de actividades
   useEffect(() => {
     const fetchActividades = async () => {
       try {
         const token = authService.getToken();
         if (!token) {
-          throw new Error("No authentication token found");
+          throw new Error("No se encontró token de autenticación");
         }
-        /*
-          const response = await fetch(
-            "http://localhost:5000/api/users/actividades",
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-  
-          if (!response.ok) {
-            throw new Error("Error al obtener actividades");
-          }
-          
-          const data = await response.json();
-          setActividades(data); // Aquí se setearían las actividades reales desde el backend
-        */
 
-        // Usamos datos simulados mientras el endpoint no esté disponible
-        setActividades(historialActividadSimulado);
-      } catch (error) {
-        console.error("Error fetcheando actividades:", error);
-        setError(
-          error instanceof Error ? error.message : "An unknown error occurred"
+        const response = await fetch(
+          `http://localhost:8085/api/users/${userData?.userId}/activity`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
         );
-        // Usamos datos simulados como fallback
-        setActividades(historialActividadSimulado);
+
+        if (!response.ok) {
+          throw new Error("Error al obtener actividades");
+        }
+
+        const data = await response.json();
+        setActividades(data); // Guardamos los datos directamente (timestamp como string)
+      } catch (error) {
+        console.error("Error al obtener actividades:", error);
+        setError(error instanceof Error ? error.message : "Error desconocido");
       } finally {
         setLoading(false);
       }
     };
 
     fetchActividades();
-  }, []);
+  }, [userData?.userId]);
+
+  // Función para convertir timestamp string a Date
+  const parseTimestamp = (timestamp: string): Date => {
+    return new Date(timestamp);
+  };
 
   // Obtener años únicos
   const anosUnicos = [
     ...new Set(
-      actividades.map((item) => new Date(item.fecha).getFullYear().toString())
+      actividades.map((item) =>
+        parseTimestamp(item.timestamp).getFullYear().toString()
+      )
     ),
   ];
 
@@ -128,19 +74,20 @@ export default function HistorialActividad() {
   const mesesUnicos = [
     ...new Set(
       actividades.map((item) =>
-        (new Date(item.fecha).getMonth() + 1).toString()
+        (parseTimestamp(item.timestamp).getMonth() + 1).toString()
       )
     ),
   ];
 
   const actividadesFiltradas = actividades.filter((actividad) => {
-    const fechaActividad = new Date(actividad.fecha);
+    const fechaActividad = parseTimestamp(actividad.timestamp);
     const anoActividad = fechaActividad.getFullYear().toString();
     const mesActividad = (fechaActividad.getMonth() + 1).toString();
+    const diaActividad = fechaActividad.getDate().toString();
 
-    const cumpleTipo = filtroTipo === "todos" || actividad.tipo === filtroTipo;
-    const cumpleFecha =
-      filtroFecha === "todos" || actividad.fecha === filtroFecha;
+    const cumpleTipo =
+      filtroTipo === "todos" || actividad.action === filtroTipo;
+    const cumpleFecha = filtroFecha === "todos" || diaActividad === filtroFecha;
     const cumpleAno = filtroAno === "todos" || anoActividad === filtroAno;
     const cumpleMes = filtroMes === "todos" || mesActividad === filtroMes;
 
@@ -152,7 +99,7 @@ export default function HistorialActividad() {
 
   const getIconoTipo = (tipo: string) => {
     switch (tipo) {
-      case "inicio_sesion":
+      case "LOGIN":
         return (
           <img
             src="/login.svg"
@@ -160,7 +107,7 @@ export default function HistorialActividad() {
             className="actividad-icono-svg"
           />
         );
-      case "actualizacion_perfil":
+      case "USER_UPDATED":
         return (
           <img
             src="/edit.svg"
@@ -168,7 +115,7 @@ export default function HistorialActividad() {
             className="actividad-icono-svg"
           />
         );
-      case "cambio_contrasena":
+      case "PASSWORD_CHANGED":
         return (
           <img
             src="/unlock.svg"
@@ -208,11 +155,9 @@ export default function HistorialActividad() {
               className="filtro-select"
             >
               <option value="todos">Todos</option>
-              <option value="inicio_sesion">Inicio de sesión</option>
-              <option value="actualizacion_perfil">
-                Actualización de perfil
-              </option>
-              <option value="cambio_contrasena">Cambio de contraseña</option>
+              <option value="LOGIN">Inicio de sesión</option>
+              <option value="USER_UPDATED">Actualización de perfil</option>
+              <option value="PASSWORD_CHANGED">Cambio de contraseña</option>
             </select>
           </div>
 
@@ -246,16 +191,20 @@ export default function HistorialActividad() {
                   .filter((mes) =>
                     actividades.some(
                       (a) =>
-                        new Date(a.fecha).getFullYear().toString() ===
+                        parseTimestamp(a.timestamp).getFullYear().toString() ===
                           filtroAno &&
-                        (new Date(a.fecha).getMonth() + 1).toString() === mes
+                        (
+                          parseTimestamp(a.timestamp).getMonth() + 1
+                        ).toString() === mes
                     )
                   )
                   .map((mes) => (
                     <option key={mes} value={mes}>
                       {new Date(2000, parseInt(mes) - 1).toLocaleString(
                         "es-ES",
-                        { month: "long" }
+                        {
+                          month: "long",
+                        }
                       )}
                     </option>
                   ))}
@@ -265,24 +214,37 @@ export default function HistorialActividad() {
       </div>
 
       <div className="actividades-container">
-        {actividadesFiltradas.map((actividad) => (
-          <div key={actividad.id} className="actividad-item">
-            <div className="actividad-icono">
-              {getIconoTipo(actividad.tipo)}
-            </div>
-            <div className="actividad-contenido">
-              <div className="actividad-nombre">{actividad.nombre}</div>
-              <div className="actividad-fecha">
-                {new Date(actividad.fecha).toLocaleDateString("es-ES", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                })}{" "}
-                • {actividad.hora}
+        {actividadesFiltradas.map((actividad) => {
+          const fecha = parseTimestamp(actividad.timestamp);
+          return (
+            <div key={actividad.id} className="actividad-item">
+              <div className="actividad-icono">
+                {getIconoTipo(actividad.action)}
+              </div>
+              <div className="actividad-contenido">
+                <div className="actividad-nombre">
+                  {actividad.action === "LOGIN" && "Inicio de sesión"}
+                  {actividad.action === "USER_UPDATED" &&
+                    "Actualización de perfil"}
+                  {actividad.action === "PASSWORD_CHANGED" &&
+                    "Cambio de contraseña"}
+                </div>
+                <div className="actividad-fecha">
+                  {fecha.toLocaleDateString("es-ES", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}{" "}
+                  •{" "}
+                  {fecha.toLocaleTimeString("es-ES", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

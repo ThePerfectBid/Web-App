@@ -3,7 +3,6 @@ import { Form } from "../../Forms/Form/Form";
 import FormCard from "../../Forms/FormCard/FormCard";
 import FormButton from "../../Forms/FormButton/FormButton";
 import "./UserModify.css";
-import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/authService";
 
 interface Rol {
@@ -13,8 +12,8 @@ interface Rol {
 
 interface UserModifyProps {
   setModifyForm: (value: boolean) => void;
-  userEmail: string; // Email del usuario que se está modificando
-  userId: string; // ID del usuario para la petición al backend
+  userEmail: string;
+  userId: string;
 }
 
 export default function UserModify({
@@ -27,38 +26,42 @@ export default function UserModify({
   const [selectedRolId, setSelectedRolId] = useState<string>("");
   const [roles, setRoles] = useState<Rol[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { userData } = useAuth();
 
-  // Simular carga de roles desde backend
+  const verifyrole = (data: Rol) => {
+    if (data?.id === "6818b9e5035415cfcd8aa231") {
+      return "Postor";
+    } else if (data?.id === "6818b7af035415cfcd8aa22a") {
+      return "Subastador";
+    } else if (data?.id === "6818bd0b035415cfcd8aa238") {
+      return "Soporte tecnico";
+    } else if (data?.id === "6818b6ff035415cfcd8aa229") {
+      return "Administrador";
+    }
+  };
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        //Obtener token
         const token = authService.getToken();
         if (!token) {
           throw new Error("No authentication token found");
         }
-        //Hacer fetch al rol utilizando el roleID del user Data
-        // Petición al endpoint para obtener todos los roles
-        /*  const response = await fetch('http://localhost:5028/api/users/GetallRoles', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        })
+
+        const response = await fetch(
+          "http://localhost:8085/api/users/GetallRoles",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
         if (!response.ok) {
-          throw new Error('Error al obtener roles')
-        }*/
-        //mandarle el token
-        // const data:Rol[] = reponse;
-        // Datos de ejemplo
-        const data: Rol[] = [
-          { id: "1", nombre: "Administrador" },
-          { id: "2", nombre: "Editor" },
-          { id: "3", nombre: "Consultor" },
-          { id: "4", nombre: "Invitado" },
-        ];
+          throw new Error("Error al obtener roles");
+        }
+
+        const data: Rol[] = await response.json();
 
         setRoles(data);
       } catch (error) {
@@ -87,17 +90,27 @@ export default function UserModify({
 
   const confirmChanges = async () => {
     try {
-      const email = userData?.email;
-      console.log(email);
-      //const token = authService.getToken()
-      /*
-      await fetch(`/api/users/${userId}/role`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rolId: selectedRolId })
-      })
-      */
-      console.log(`Asignando rol ${selectedRolId} al usuario ${userId}`);
+      const token = authService.getToken();
+      if (!token) {
+        throw new Error("No se encontró token de autenticación");
+      }
+
+      const response = await fetch(
+        `http://localhost:8085/api/users/updaterole/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ newRoleId: selectedRolId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al actualizar el rol");
+      }
 
       setShowConfirmation(false);
       setModifyForm(false);
@@ -110,10 +123,12 @@ export default function UserModify({
     setShowConfirmation(false);
   };
 
-  // Filtrar roles según término de búsqueda
-  const filteredRoles = roles.filter((rol) =>
-    rol.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filtrar roles según término de búsqueda (versión segura)
+  const filteredRoles = roles.filter((rol) => {
+    const nombreRol = rol.nombre?.toString() || "";
+    const terminoBusqueda = searchTerm?.toString() || "";
+    return nombreRol.toLowerCase().includes(terminoBusqueda.toLowerCase());
+  });
 
   if (isLoading) return <div>Cargando roles...</div>;
 
@@ -153,12 +168,13 @@ export default function UserModify({
                         checked={selectedRolId === rol.id}
                         onChange={() => handleRolSelection(rol.id)}
                       />
-                      <span className="role-nombre">{rol.nombre}</span>
+
+                      <span className="role-nombre">{verifyrole(rol)}</span>
                     </label>
                   </div>
                 ))
               ) : (
-                <p>No se encontraron roles</p>
+                <p className="error">No se encontraron roles</p>
               )}
             </div>
           </div>

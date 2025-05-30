@@ -12,17 +12,10 @@ interface Persona {
   name: string;
   lastName: string;
   email: string;
+  phone: string;
+  address: string;
   roleId: string;
 }
-
-// Datos simulados para persona
-const personNueva: Persona = {
-  id: "12345",
-  name: "Juan",
-  lastName: "Pérez",
-  email: "juan.perez@example.com",
-  roleId: "2",
-};
 
 export default function Profile() {
   const [modifyForm, setModifyForm] = useState(false);
@@ -40,9 +33,11 @@ export default function Profile() {
         if (!token) {
           throw new Error("No authentication token found");
         }
-        /*
+
         const response = await fetch(
-          "http://localhost:5000/api/users/allUsers",
+          `http://localhost:8085/api/users/getuserbyemail?email=${encodeURIComponent(
+            userData?.email || ""
+          )}`,
           {
             method: "GET",
             headers: {
@@ -53,31 +48,22 @@ export default function Profile() {
         );
 
         if (!response.ok) {
-          throw new Error("Error al obtener usuarios");
+          throw new Error("Error al obtener usuario");
         }
-        const res = await fetch("http://localhost:5000/api/users/GetallRoles", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
 
-        if (!res.ok) {
-          throw new Error("Error al obtener roles");
-        }
         const data = await response.json();
-        const data2 = await res.json();
-        const currentUser = data.find(
-          (prof: any) => prof.id === userData?.userId
-        );
 
-        if (!currentUser) {
-          throw new Error("User not found");
-        }*/
+        setPersona(data);
 
-        setPersona(personNueva); // Usamos los datos simulados en lugar de currentUser
-        setRole("Subastador");
+        if (data?.roleId === "6818b9e5035415cfcd8aa231") {
+          setRole("Postor");
+        } else if (data?.roleId === "6818b7af035415cfcd8aa22a") {
+          setRole("Subastador");
+        } else if (data?.roleId === "6818bd0b035415cfcd8aa238") {
+          setRole("Soporte tecnico");
+        } else if (data?.roleId === "6818b6ff035415cfcd8aa229") {
+          setRole("Administrador");
+        }
       } catch (error) {
         console.error("Error fetcheando roles:", error);
         setError(
@@ -87,9 +73,8 @@ export default function Profile() {
         setLoading(false);
       }
     };
-
     auth();
-  }, [userData?.userId]);
+  }, []);
 
   const handleEditProfile = () => {
     setModifyForm(!modifyForm);
@@ -134,25 +119,19 @@ export default function Profile() {
           <div className="description-section">
             <div className="description">
               <ProfileElement
-                title="Fecha de nacimiento"
-                content={""}
-                icon="/calendar.svg"
-              />
-              <ProfileElement
                 title="Correo electrónico"
                 content={persona.email}
                 icon="/mail.svg"
               />
-              <ProfileElement title="Teléfono" content={""} icon="/phone.svg" />
               <ProfileElement
-                title="Dirección"
-                content={""}
-                icon="/location.svg"
+                title="Teléfono"
+                content={persona.phone}
+                icon="/phone.svg"
               />
               <ProfileElement
-                title="Fecha de ingreso"
-                content={""}
-                icon="/calendar.svg"
+                title="Dirección"
+                content={persona.address}
+                icon="/location.svg"
               />
             </div>
           </div>
@@ -173,11 +152,8 @@ export default function Profile() {
         <ModifyForm
           nombre={persona.name}
           apellido={persona.lastName}
-          fechaNacimiento={""}
-          correo={persona.email}
-          telefono={""}
-          direccion={""}
-          fechaIngreso={""}
+          telefono={persona.phone}
+          direccion={persona.address}
           setModifyForm={setModifyForm}
         />
       )}

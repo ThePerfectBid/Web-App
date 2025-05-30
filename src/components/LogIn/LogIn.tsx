@@ -39,7 +39,7 @@ export default function LogIn() {
         return;
       }
 
-      // Simulación de respuesta del servidor (esto sería reemplazado por tu llamada real a la API)
+      /* Simulación de respuesta del servidor (esto sería reemplazado por tu llamada real a la API)
       const response = {
         access_token:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
@@ -49,9 +49,9 @@ export default function LogIn() {
         email: "usuario.prueba@example.com",
         userId: "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
         roleId: "6818b6ff035415cfcd8aa229",
-      };
-      /*
-      const response = await fetch("http://localhost:5000/login", {
+      };*/
+
+      const response = await fetch("http://localhost:44335/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Obligatorio para JSON
@@ -65,8 +65,8 @@ export default function LogIn() {
       }
 
       const data = await response.json();
-*/
-      login(response);
+
+      login(data);
       navigate("/perfil");
     } catch (err: any) {
       // Manejo de errores de la API
