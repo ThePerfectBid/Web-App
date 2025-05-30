@@ -67,11 +67,11 @@ export default function RoleModifyForm({
           throw new Error("Error al obtener permisos del rol");
         }
 
-        const data2: Permiso[] = await response2.json();
-        console.log(data2);
-        // 3. Marcar los permisos actuales del rol
+        const data2: string[] = await response2.json(); // Ahora es array de strings
+
+        // 3. Establecer los permisos y los seleccionados
         setPermisos(data);
-        setSelectedPermisos(data2.map((p) => p.id)); // Aquí se marcan los checkboxes
+        setSelectedPermisos(data2);
       } catch (error) {
         console.error("Error fetching permisos:", error);
       } finally {
@@ -109,7 +109,7 @@ export default function RoleModifyForm({
       // 1. Agregar permisos seleccionados
       for (const permisoId of selectedPermisos) {
         await fetch(
-          `http://localhost:8085/api/${roleId}/add-permission/${permisoId}`,
+          `http://localhost:8085/api/users/${roleId}/add-permission/${permisoId}`,
           {
             method: "POST",
             headers: {
