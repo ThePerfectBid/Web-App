@@ -82,7 +82,7 @@ export default function Register() {
       }
 
       // Validación de rol seleccionado
-      if (!["subastador", "postor"].includes(selectedRol)) {
+      if (!["Subastador", "Postor"].includes(selectedRol)) {
         setError("Por favor selecciona un rol válido");
         return;
       }
