@@ -27,6 +27,17 @@ export default function UserModify({
   const [roles, setRoles] = useState<Rol[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const verifyrole = (data: Rol) => {
+    if (data?.id === "6818b9e5035415cfcd8aa231") {
+      return "Postor";
+    } else if (data?.id === "6818b7af035415cfcd8aa22a") {
+      return "Subastador";
+    } else if (data?.id === "6818bd0b035415cfcd8aa238") {
+      return "Soporte tecnico";
+    } else if (data?.id === "6818b6ff035415cfcd8aa229") {
+      return "Administrador";
+    }
+  };
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -51,6 +62,7 @@ export default function UserModify({
         }
 
         const data: Rol[] = await response.json();
+
         setRoles(data);
       } catch (error) {
         console.error("Error fetching roles:", error);
@@ -156,7 +168,8 @@ export default function UserModify({
                         checked={selectedRolId === rol.id}
                         onChange={() => handleRolSelection(rol.id)}
                       />
-                      <span className="role-nombre">{rol.nombre}</span>
+
+                      <span className="role-nombre">{verifyrole(rol)}</span>
                     </label>
                   </div>
                 ))

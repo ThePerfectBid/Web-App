@@ -21,22 +21,23 @@ export default function RoleModifyForm({
 }: RoleFormProps) {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [permisos, setPermisos] = useState<Permiso[]>([]);
-  const [remove, setRemove] = useState<string[]>([]);
+  const [allPermisos, setAllPermisos] = useState<Permiso[]>([]);
+  const [currentPermisos, setCurrentPermisos] = useState<string[]>([]);
   const [selectedPermisos, setSelectedPermisos] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Simular carga de permisos desde backend
+  // Cargar todos los permisos y los permisos actuales del rol
   useEffect(() => {
-    const fetchPermisos = async () => {
+    const fetchData = async () => {
       try {
         const token = authService.getToken();
-
         if (!token) {
           throw new Error("No authentication token found");
         }
-        // Petición al endpoint para obtener todos los permisos
-        const response = await fetch(
+
+        // Obtener todos los permisos disponibles
+        const permisosResponse = await fetch(
           "http://localhost:8085/api/users/allPermissions",
           {
             method: "GET",
@@ -46,22 +47,43 @@ export default function RoleModifyForm({
             },
           }
         );
-        if (!response.ok) {
-          throw new Error("Error al obtener permisos");
+
+        if (!permisosResponse.ok) {
+          throw new Error("Error al obtener todos los permisos");
         }
+        const permisosData: Permiso[] = await permisosResponse.json();
 
-        const data: Permiso[] = await response.json();
+        // Obtener permisos actuales del rol
+        const rolPermisosResponse = await fetch(
+          `http://localhost:8085/api/users/${roleId}/permissions`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-        setPermisos(data);
+        if (!rolPermisosResponse.ok) {
+          throw new Error("Error al obtener permisos del rol");
+        }
+        const rolPermisosData: Permiso[] = await rolPermisosResponse.json();
+
+        setAllPermisos(permisosData);
+        const currentPermisoIds = rolPermisosData.map((p) => p.id);
+        setCurrentPermisos(currentPermisoIds);
+        setSelectedPermisos(currentPermisoIds); // Inicialmente seleccionados
       } catch (error) {
-        console.error("Error fetching permisos:", error);
+        console.error("Error fetching data:", error);
+        setError(error instanceof Error ? error.message : "Error desconocido");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchPermisos();
-  }, []);
+    fetchData();
+  }, [roleId]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -73,36 +95,31 @@ export default function RoleModifyForm({
         ? prev.filter((permisoId) => permisoId !== id)
         : [...prev, id]
     );
-
-    // Actualizar los permisos a remover (los no seleccionados)
-    setRemove(
-      permisos
-        .filter(
-          (permiso) =>
-            !selectedPermisos.includes(permiso.id) && permiso.id !== id
-        )
-        .map((permiso) => permiso.id)
-    );
   };
 
   const handleSubmit = () => {
-    // Actualizar la lista de permisos a remover antes de mostrar la confirmación
-    setRemove(
-      permisos
-        .filter((permiso) => !selectedPermisos.includes(permiso.id))
-        .map((permiso) => permiso.id)
-    );
     setShowConfirmation(true);
   };
 
   const confirmChanges = async () => {
     try {
       const token = authService.getToken();
+      if (!token) {
+        throw new Error("No se encontró token de autenticación");
+      }
 
-      // Enviar cada permiso seleccionado al backend para agregar
-      for (const permisoId of selectedPermisos) {
-        await fetch(
-          `http://localhost:8085/api/${roleId}/add-permission/${permisoId}`,
+      // Determinar permisos a agregar y eliminar
+      const permisosToAdd = selectedPermisos.filter(
+        (id) => !currentPermisos.includes(id)
+      );
+      const permisosToRemove = currentPermisos.filter(
+        (id) => !selectedPermisos.includes(id)
+      );
+
+      // Enviar cambios al backend
+      const addPromises = permisosToAdd.map((permisoId) =>
+        fetch(
+          `http://localhost:8085/api/users/${roleId}/add-permission/${permisoId}`,
           {
             method: "POST",
             headers: {
@@ -110,13 +127,12 @@ export default function RoleModifyForm({
               Authorization: `Bearer ${token}`,
             },
           }
-        );
-      }
+        )
+      );
 
-      // Eliminar los permisos no seleccionados
-      for (const permisoId of remove) {
-        await fetch(
-          `http://localhost:8085/api/${roleId}/remove-permission/${permisoId}`,
+      const removePromises = permisosToRemove.map((permisoId) =>
+        fetch(
+          `http://localhost:8085/api/users/${roleId}/remove-permission/${permisoId}`,
           {
             method: "DELETE",
             headers: {
@@ -124,13 +140,17 @@ export default function RoleModifyForm({
               Authorization: `Bearer ${token}`,
             },
           }
-        );
-      }
+        )
+      );
+
+      // Esperar a que todas las operaciones terminen
+      await Promise.all([...addPromises, ...removePromises]);
 
       setShowConfirmation(false);
       setModifyForm(false);
     } catch (error) {
       console.error("Error al guardar permisos:", error);
+      setError("Error al actualizar los permisos");
     }
   };
 
@@ -139,11 +159,12 @@ export default function RoleModifyForm({
   };
 
   // Filtrar permisos según término de búsqueda
-  const filteredPermisos = permisos.filter((permiso) =>
+  const filteredPermisos = allPermisos.filter((permiso) =>
     permiso.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (isLoading) return <div>Cargando permisos...</div>;
+  if (error) return <div className="error-message">{error}</div>;
 
   return (
     <>
