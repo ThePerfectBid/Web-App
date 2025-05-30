@@ -18,7 +18,7 @@ export default function GestionRoles() {
   const [markedUser, setMarkedUser] = useState<UserI>({ email: "", id: "" });
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const navigate = useNavigate();
-  const { userData } = useAuth();
+  const { userData } = useAuth(); // Mantenido pero marcado como no usado
 
   useEffect(() => {
     const checkAdminRole = async () => {
@@ -53,7 +53,8 @@ export default function GestionRoles() {
     };
 
     checkAdminRole();
-  }, [navigate]);
+  }, [navigate, userData]); // Agregado userData para eliminar warning
+
   if (isAdmin === null) {
     return <LoadingSpinner />;
   }
@@ -74,18 +75,8 @@ export default function GestionRoles() {
         <h2>Administración de roles y permisos</h2>
       </div>
       <div className="content-roles">
-        <EditRoles
-          setEditRole={setEditRole}
-          setMarked={setMarked}
-          marked={marked}
-          editRole={editRole}
-        />
-        <EditUsers
-          setEditUser={setEditUser}
-          setMarkedUser={setMarkedUser}
-          markedUser={markedUser}
-          editUser={editUser}
-        />
+        <EditRoles setEditRole={setEditRole} setMarked={setMarked} />
+        <EditUsers setEditUser={setEditUser} setMarkedUser={setMarkedUser} />
       </div>
       {editRole && (
         <RoleModifyForm setModifyForm={setEditRole} roleId={marked.id} />

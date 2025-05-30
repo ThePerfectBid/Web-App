@@ -1,33 +1,42 @@
-import { useState, useEffect } from 'react'
-import { Form } from '../../Forms/Form/Form'
-import FormCard from '../../Forms/FormCard/FormCard'
-import FormButton from '../../Forms/FormButton/FormButton'
-import './RoleModifyForm.css'
-import { authService } from '../../services/authService'
+import { useState, useEffect } from "react";
+import { Form } from "../../Forms/Form/Form";
+import FormCard from "../../Forms/FormCard/FormCard";
+import FormButton from "../../Forms/FormButton/FormButton";
+import "./RoleModifyForm.css";
+import { authService } from "../../services/authService";
 
 interface Permiso {
-  id: string
-  nombre: string
+  id: string;
+  nombre: string;
 }
 
 interface RoleFormProps {
-  setModifyForm: (value: boolean) => void
-  roleId: string
+  setModifyForm: (value: boolean) => void;
+  roleId: string;
 }
 
-export default function RoleModifyForm({ setModifyForm, roleId }: RoleFormProps) {
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [permisos, setPermisos] = useState<Permiso[]>([])
-  const [remove, setRemove] = useState<string[]>([])
-  const [selectedPermisos, setSelectedPermisos] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+export default function RoleModifyForm({
+  setModifyForm,
+  roleId,
+}: RoleFormProps) {
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [permisos, setPermisos] = useState<Permiso[]>([]);
+  const [remove, setRemove] = useState<string[]>([]);
+  const [selectedPermisos, setSelectedPermisos] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Simular carga de permisos desde backend
   useEffect(() => {
+    const roleIdparam = roleId;
+    console.log(roleIdparam);
     const fetchPermisos = async () => {
       try {
-        //const token = authService.getToken()
+        const token = authService.getToken();
+
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
         // Petición al endpoint para obtener todos los permisos
         /*  const response = await fetch('http://localhost:5028/api/users/allPermissions', {
                   method: 'GET',
@@ -42,40 +51,45 @@ export default function RoleModifyForm({ setModifyForm, roleId }: RoleFormProps)
         // const data: Permiso[] = response
         // Datos de ejemplo
         const data: Permiso[] = [
-          { id: '1', nombre: 'Crear usuarios' },
-          { id: '2', nombre: 'Editar roles' },
-          { id: '3', nombre: 'Eliminar contenido' },
-          { id: '4', nombre: 'Ver reportes' },
-          { id: '5', nombre: 'Gestionar permisos' },
-        ]
+          { id: "1", nombre: "Crear usuarios" },
+          { id: "2", nombre: "Editar roles" },
+          { id: "3", nombre: "Eliminar contenido" },
+          { id: "4", nombre: "Ver reportes" },
+          { id: "5", nombre: "Gestionar permisos" },
+        ];
 
-        setPermisos(data)
+        setPermisos(data);
       } catch (error) {
-        console.error('Error fetching permisos:', error)
+        console.error("Error fetching permisos:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchPermisos()
-  }, [])
+    fetchPermisos();
+  }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-  }
+    setSearchTerm(e.target.value);
+  };
 
   const togglePermiso = (id: string) => {
     setSelectedPermisos((prev) =>
-      prev.includes(id) ? prev.filter((permisoId) => permisoId !== id) : [...prev, id]
-    )
+      prev.includes(id)
+        ? prev.filter((permisoId) => permisoId !== id)
+        : [...prev, id]
+    );
 
     // Actualizar los permisos a remover (los no seleccionados)
     setRemove(
       permisos
-        .filter((permiso) => !selectedPermisos.includes(permiso.id) && permiso.id !== id)
+        .filter(
+          (permiso) =>
+            !selectedPermisos.includes(permiso.id) && permiso.id !== id
+        )
         .map((permiso) => permiso.id)
-    )
-  }
+    );
+  };
 
   const handleSubmit = () => {
     // Actualizar la lista de permisos a remover antes de mostrar la confirmación
@@ -83,9 +97,9 @@ export default function RoleModifyForm({ setModifyForm, roleId }: RoleFormProps)
       permisos
         .filter((permiso) => !selectedPermisos.includes(permiso.id))
         .map((permiso) => permiso.id)
-    )
-    setShowConfirmation(true)
-  }
+    );
+    setShowConfirmation(true);
+  };
 
   const confirmChanges = async () => {
     try {
@@ -101,7 +115,7 @@ export default function RoleModifyForm({ setModifyForm, roleId }: RoleFormProps)
         //   },
         //   body: JSON.stringify({ permisoId })
         // })
-        console.log(`Agregando permiso: ${permisoId}`)
+        console.log(`Agregando permiso: ${permisoId}`);
       }
 
       // Eliminar los permisos no seleccionados
@@ -113,26 +127,26 @@ export default function RoleModifyForm({ setModifyForm, roleId }: RoleFormProps)
         //     'Authorization': `Bearer ${token}`
         //   }
         // })
-        console.log(`Eliminando permiso: ${permisoId}`)
+        console.log(`Eliminando permiso: ${permisoId}`);
       }
 
-      setShowConfirmation(false)
-      setModifyForm(false)
+      setShowConfirmation(false);
+      setModifyForm(false);
     } catch (error) {
-      console.error('Error al guardar permisos:', error)
+      console.error("Error al guardar permisos:", error);
     }
-  }
+  };
 
   const cancelChanges = () => {
-    setShowConfirmation(false)
-  }
+    setShowConfirmation(false);
+  };
 
   // Filtrar permisos según término de búsqueda
   const filteredPermisos = permisos.filter((permiso) =>
     permiso.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  );
 
-  if (isLoading) return <div>Cargando permisos...</div>
+  if (isLoading) return <div>Cargando permisos...</div>;
 
   return (
     <>
@@ -199,5 +213,5 @@ export default function RoleModifyForm({ setModifyForm, roleId }: RoleFormProps)
         </div>
       )}
     </>
-  )
+  );
 }

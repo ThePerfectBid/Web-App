@@ -1,36 +1,43 @@
-import { useState, useEffect } from 'react'
-import { Form } from '../../Forms/Form/Form'
-import FormCard from '../../Forms/FormCard/FormCard'
-import FormButton from '../../Forms/FormButton/FormButton'
-import './UserModify.css'
-import { useAuth } from '../../context/AuthContext'
-import { authService } from '../../services/authService'
+import { useState, useEffect } from "react";
+import { Form } from "../../Forms/Form/Form";
+import FormCard from "../../Forms/FormCard/FormCard";
+import FormButton from "../../Forms/FormButton/FormButton";
+import "./UserModify.css";
+import { useAuth } from "../../context/AuthContext";
+import { authService } from "../../services/authService";
 
 interface Rol {
-  id: string
-  nombre: string
+  id: string;
+  nombre: string;
 }
 
 interface UserModifyProps {
-  setModifyForm: (value: boolean) => void
-  userEmail: string // Email del usuario que se está modificando
-  userId: string // ID del usuario para la petición al backend
+  setModifyForm: (value: boolean) => void;
+  userEmail: string; // Email del usuario que se está modificando
+  userId: string; // ID del usuario para la petición al backend
 }
 
-export default function UserModify({ setModifyForm, userEmail, userId }: UserModifyProps) {
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedRolId, setSelectedRolId] = useState<string>('')
-  const [roles, setRoles] = useState<Rol[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const { userData } = useAuth()
+export default function UserModify({
+  setModifyForm,
+  userEmail,
+  userId,
+}: UserModifyProps) {
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRolId, setSelectedRolId] = useState<string>("");
+  const [roles, setRoles] = useState<Rol[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { userData } = useAuth();
 
   // Simular carga de roles desde backend
   useEffect(() => {
     const fetchRoles = async () => {
       try {
         //Obtener token
-        // const token = authService.getToken()
+        const token = authService.getToken();
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
         //Hacer fetch al rol utilizando el roleID del user Data
         // Petición al endpoint para obtener todos los roles
         /*  const response = await fetch('http://localhost:5028/api/users/GetallRoles', {
@@ -47,39 +54,41 @@ export default function UserModify({ setModifyForm, userEmail, userId }: UserMod
         // const data:Rol[] = reponse;
         // Datos de ejemplo
         const data: Rol[] = [
-          { id: '1', nombre: 'Administrador' },
-          { id: '2', nombre: 'Editor' },
-          { id: '3', nombre: 'Consultor' },
-          { id: '4', nombre: 'Invitado' },
-        ]
+          { id: "1", nombre: "Administrador" },
+          { id: "2", nombre: "Editor" },
+          { id: "3", nombre: "Consultor" },
+          { id: "4", nombre: "Invitado" },
+        ];
 
-        setRoles(data)
+        setRoles(data);
       } catch (error) {
-        console.error('Error fetching roles:', error)
+        console.error("Error fetching roles:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchRoles()
-  }, [])
+    fetchRoles();
+  }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-  }
+    setSearchTerm(e.target.value);
+  };
 
   const handleRolSelection = (id: string) => {
-    setSelectedRolId(id)
-  }
+    setSelectedRolId(id);
+  };
 
   const handleSubmit = () => {
     if (selectedRolId) {
-      setShowConfirmation(true)
+      setShowConfirmation(true);
     }
-  }
+  };
 
   const confirmChanges = async () => {
     try {
+      const email = userData?.email;
+      console.log(email);
       //const token = authService.getToken()
       /*
       await fetch(`/api/users/${userId}/role`, {
@@ -88,25 +97,25 @@ export default function UserModify({ setModifyForm, userEmail, userId }: UserMod
         body: JSON.stringify({ rolId: selectedRolId })
       })
       */
-      console.log(`Asignando rol ${selectedRolId} al usuario ${userId}`)
+      console.log(`Asignando rol ${selectedRolId} al usuario ${userId}`);
 
-      setShowConfirmation(false)
-      setModifyForm(false)
+      setShowConfirmation(false);
+      setModifyForm(false);
     } catch (error) {
-      console.error('Error al asignar rol:', error)
+      console.error("Error al asignar rol:", error);
     }
-  }
+  };
 
   const cancelChanges = () => {
-    setShowConfirmation(false)
-  }
+    setShowConfirmation(false);
+  };
 
   // Filtrar roles según término de búsqueda
   const filteredRoles = roles.filter((rol) =>
     rol.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  );
 
-  if (isLoading) return <div>Cargando roles...</div>
+  if (isLoading) return <div>Cargando roles...</div>;
 
   return (
     <>
@@ -155,7 +164,11 @@ export default function UserModify({ setModifyForm, userEmail, userId }: UserMod
           </div>
 
           <div className="buttons-footer">
-            <FormButton text="Guardar Cambios" handle={handleSubmit} disabled={!selectedRolId} />
+            <FormButton
+              text="Guardar Cambios"
+              handle={handleSubmit}
+              disabled={!selectedRolId}
+            />
           </div>
         </Form>
       </div>
@@ -165,7 +178,10 @@ export default function UserModify({ setModifyForm, userEmail, userId }: UserMod
           <div className="confirmation-box">
             <h4>¿Confirmar cambios?</h4>
             <br />
-            <p>¿Estás seguro de que deseas asignar este rol al usuario {userEmail}?</p>
+            <p>
+              ¿Estás seguro de que deseas asignar este rol al usuario{" "}
+              {userEmail}?
+            </p>
             <div className="confirmation-buttons">
               <FormButton text="Confirmar" handle={confirmChanges} />
               <FormButton text="Cancelar" handle={cancelChanges} />
@@ -174,5 +190,5 @@ export default function UserModify({ setModifyForm, userEmail, userId }: UserMod
         </div>
       )}
     </>
-  )
+  );
 }

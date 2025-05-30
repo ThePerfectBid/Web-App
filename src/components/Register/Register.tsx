@@ -1,4 +1,4 @@
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Field from "../Forms/Field/Field";
 import { Form } from "../Forms/Form/Form";
 import FormCard from "../Forms/FormCard/FormCard";
@@ -6,7 +6,7 @@ import "./Register.css";
 import FormButton from "../Forms/FormButton/FormButton";
 import { useState } from "react";
 
-export default function Register(params: any) {
+export default function Register() {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -86,8 +86,15 @@ export default function Register(params: any) {
         setError("Por favor selecciona un rol válido");
         return;
       }
+      let roleName = "";
 
-      const response = await fetch("https://localhost:5000/register", {
+      if (selectedRol === "Postor") {
+        roleName = "6818b9e5035415cfcd8aa231";
+      } else if (selectedRol === "Subastador") {
+        roleName = "6818b7af035415cfcd8aa22a";
+      }
+
+      const response = await fetch("https://localhost:44335/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +106,7 @@ export default function Register(params: any) {
           address,
           phone,
           password,
-          role: selectedRol,
+          role: roleName,
         }),
       });
 
