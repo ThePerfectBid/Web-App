@@ -24,7 +24,7 @@ export default function RoleModifyForm({
   const [permisos, setPermisos] = useState<Permiso[]>([]);
   const [selectedPermisos, setSelectedPermisos] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [permisosBack, setPermisosBack] = useState<string[]>([]);
+
   useEffect(() => {
     const fetchPermisos = async () => {
       try {
@@ -71,7 +71,7 @@ export default function RoleModifyForm({
 
         // 3. Establecer los permisos y los seleccionados
         setPermisos(data);
-        setPermisosBack(data2);
+        setSelectedPermisos(data2);
       } catch (error) {
         console.error("Error fetching permisos:", error);
       } finally {
@@ -98,8 +98,6 @@ export default function RoleModifyForm({
     setShowConfirmation(true);
   };
 
-  // ... (imports y definiciones previas permanecen igual)
-
   const confirmChanges = async () => {
     try {
       const token = authService.getToken();
@@ -107,36 +105,13 @@ export default function RoleModifyForm({
         throw new Error("No se encontró token de autenticación");
       }
 
-      // 1. Permisos a agregar (nuevos seleccionados)
-      const permisosToAdd = selectedPermisos.filter(
-        (id) => !permisosBack.includes(id)
-      );
+      // 1. Eliminar todos los permisos que NO están seleccionados
+      const permisosAEliminar = permisos
+        .filter((p) => !selectedPermisos.includes(p.id))
+        .map((p) => p.id);
 
-      // 2. Agregar solo los nuevos permisos
-      for (const permisoId of permisosToAdd) {
-        const response = await fetch(
-          `http://localhost:8085/api/users/${roleId}/add-permission/${permisoId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error(`Error al agregar permiso ${permisoId}`);
-        }
-      }
-
-      // 3. Permisos a eliminar (desmarcados)
-      const permisosToRemove = permisosBack.filter(
-        (id) => !selectedPermisos.includes(id)
-      );
-
-      // 4. Eliminar permisos desmarcados
-      for (const permisoId of permisosToRemove) {
-        const response = await fetch(
+      for (const permisoId of permisosAEliminar) {
+        await fetch(
           `http://localhost:8085/api/users/${roleId}/remove-permission/${permisoId}`,
           {
             method: "DELETE",
@@ -146,16 +121,26 @@ export default function RoleModifyForm({
             },
           }
         );
-        if (!response.ok) {
-          throw new Error(`Error al eliminar permiso ${permisoId}`);
-        }
+      }
+
+      // 2. Agregar solo los permisos seleccionados (si no están ya asignados)
+      for (const permisoId of selectedPermisos) {
+        await fetch(
+          `http://localhost:8085/api/users/${roleId}/add-permission/${permisoId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
       }
 
       setShowConfirmation(false);
       setModifyForm(false);
     } catch (error) {
       console.error("Error al guardar permisos:", error);
-      // Aquí podrías agregar manejo de errores visual para el usuario
     }
   };
 
