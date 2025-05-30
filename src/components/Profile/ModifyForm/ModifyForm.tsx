@@ -65,7 +65,7 @@ export default function ModifyForm({
 
       // Enviar todos los permisos seleccionados en una sola petición POST
       const responseAdd = await fetch(
-        `http://localhost:8085/api/update/${userData?.userId}`,
+        `http://localhost:8085/api/users/update/${userData?.userId}`,
         {
           method: "PATCH",
           headers: {
