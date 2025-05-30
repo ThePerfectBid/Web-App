@@ -38,7 +38,7 @@ export default function RoleModifyForm({
 
         // Obtener todos los permisos disponibles
         const permisosResponse = await fetch(
-          "http://localhost:8085/api/users/permissions",
+          "http://localhost:8085/api/users/allPermissions",
           {
             method: "GET",
             headers: {
