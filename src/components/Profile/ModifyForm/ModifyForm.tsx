@@ -67,7 +67,7 @@ export default function ModifyForm({
       const responseAdd = await fetch(
         `http://localhost:8085/api/update/${userData?.userId}`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
