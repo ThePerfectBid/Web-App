@@ -94,7 +94,7 @@ export default function Register() {
         roleName = "6818b7af035415cfcd8aa22a";
       }
 
-      const response = await fetch("https://localhost:44335/register", {
+      const response = await fetch("http://localhost:44335/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export default function Register() {
           address,
           phone,
           password,
-          role: roleName,
+          roleId: roleName,
         }),
       });
 
@@ -185,8 +185,8 @@ export default function Register() {
               onChange={(e) => setSelectedRol(e.target.value)}
             >
               <option value="">Selecciona un rol</option>
-              <option value="subastador">Subastador</option>
-              <option value="postor">Postor</option>
+              <option value="Subastador">Subastador</option>
+              <option value="Postor">Postor</option>
             </select>
           </div>
         </div>

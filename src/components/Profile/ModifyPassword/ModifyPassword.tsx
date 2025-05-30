@@ -4,6 +4,7 @@ import FormCard from "../../Forms/FormCard/FormCard";
 import Field from "../../Forms/Field/Field";
 import FormButton from "../../Forms/FormButton/FormButton";
 import "../ModifyForm/ModifyForm.css";
+import { authService } from "../../services/authService";
 //Arreglar error pq no se muestra en el grid
 interface PasswordData {
   oldPassword: string;
@@ -24,6 +25,7 @@ export default function ModifyPassword({
     newPassword: "",
     confirmPassword: "",
   });
+
   const [error, setError] = useState("");
   // meter un useeffect para pedir el token y si vencio mandar pal lobby
   const handleInputChange = (field: keyof PasswordData) => (value: string) => {
@@ -52,12 +54,46 @@ export default function ModifyPassword({
     }
   };
 
-  const confirmChanges = () => {
-    setShowConfirmation(false);
-    setModifyPassword(false);
-    // peticion al back
-  };
+  const confirmChanges = async () => {
+    try {
+      setShowConfirmation(false);
+      setModifyPassword(false);
+      const token = authService.getToken();
 
+      if (!token) {
+        throw new Error("No se encontró token de autenticación");
+      }
+
+      const response = await fetch(`http://localhost:44335/update-password`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newPassword: passwords.newPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al actualizar contraseña");
+      }
+    } catch (error) {
+      console.error("Error en confirmChanges:", error);
+
+      // Revertir el cierre de los modales si hay error
+      setShowConfirmation(true);
+      setModifyPassword(true);
+
+      // Mostrar mensaje de error al usuario
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Error desconocido al actualizar contraseña"
+      );
+    }
+  };
   const cancelChanges = () => {
     setShowConfirmation(false);
   };

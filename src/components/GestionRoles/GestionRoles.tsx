@@ -10,6 +10,7 @@ import { useAuth } from "../context/AuthContext";
 import ErrorPage from "../Error/ErrorPage";
 import type { RoleI } from "./EditRoles/Role/Role";
 import type { UserI } from "./EditUsers/User/User";
+import { authService } from "../services/authService";
 
 export default function GestionRoles() {
   const [editRole, setEditRole] = useState(false);
@@ -24,30 +25,40 @@ export default function GestionRoles() {
     const checkAdminRole = async () => {
       try {
         //Obtencion de token
-        //const token = authService.getToken()
+        const token = authService.getToken();
         // Petición al endpoint para obtener todos los roles
-        /*const response = await fetch('http://localhost:5028/api/users/GetallRoles')
+        const response = await fetch(
+          "http://localhost:5028/api/users/GetallRoles",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) {
-          throw new Error('Error al obtener roles')
+          throw new Error("Error al obtener roles");
         }
 
-        const roles = await response.json()
+        const roles = await response.json();
 
         // Buscamos el rol del usuario actual
-        const userRole = roles.find((role: any) => role.id === userData.roleId)
+        const userRole = roles.find(
+          (role: any) => role.id === userData?.roleId
+        );
 
         if (!userRole) {
-          setIsAdmin(false)
-          return
+          setIsAdmin(false);
+          return;
         }
 
         // Verificar si el usuario tiene rol de administrador
-        setIsAdmin(userRole.name.toLowerCase() === 'administrador')*/
-        setIsAdmin(true);
+        setIsAdmin(userRole === "6818b6ff035415cfcd8aa229");
       } catch (error) {
         console.error("Error verificando roles:", error);
-        //navigate('/login')
+        navigate("/login");
         setIsAdmin(false);
       }
     };

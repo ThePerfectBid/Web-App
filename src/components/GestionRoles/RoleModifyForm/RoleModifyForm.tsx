@@ -7,7 +7,7 @@ import { authService } from "../../services/authService";
 
 interface Permiso {
   id: string;
-  nombre: string;
+  name: string;
 }
 
 interface RoleFormProps {
@@ -28,8 +28,6 @@ export default function RoleModifyForm({
 
   // Simular carga de permisos desde backend
   useEffect(() => {
-    const roleIdparam = roleId;
-    console.log(roleIdparam);
     const fetchPermisos = async () => {
       try {
         const token = authService.getToken();
@@ -38,25 +36,21 @@ export default function RoleModifyForm({
           throw new Error("No authentication token found");
         }
         // Petición al endpoint para obtener todos los permisos
-        /*  const response = await fetch('http://localhost:5028/api/users/allPermissions', {
-                  method: 'GET',
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                  },
-                })
-                if (!response.ok) {
-                  throw new Error('Error al obtener permisos')
-                }*/
-        // const data: Permiso[] = response
-        // Datos de ejemplo
-        const data: Permiso[] = [
-          { id: "1", nombre: "Crear usuarios" },
-          { id: "2", nombre: "Editar roles" },
-          { id: "3", nombre: "Eliminar contenido" },
-          { id: "4", nombre: "Ver reportes" },
-          { id: "5", nombre: "Gestionar permisos" },
-        ];
+        const response = await fetch(
+          "http://localhost:8085/api/users/allPermissions",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Error al obtener permisos");
+        }
+
+        const data: Permiso[] = await response.json();
 
         setPermisos(data);
       } catch (error) {
@@ -103,31 +97,34 @@ export default function RoleModifyForm({
 
   const confirmChanges = async () => {
     try {
-      // const token = authService.getToken()
+      const token = authService.getToken();
 
       // Enviar cada permiso seleccionado al backend para agregar
       for (const permisoId of selectedPermisos) {
-        // await fetch(`http://localhost:5028/api/${roleId}/add-permission`, {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': `Bearer ${token}`
-        //   },
-        //   body: JSON.stringify({ permisoId })
-        // })
-        console.log(`Agregando permiso: ${permisoId}`);
+        await fetch(
+          `http://localhost:8085/api/${roleId}/add-permission/${permisoId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
       }
 
       // Eliminar los permisos no seleccionados
       for (const permisoId of remove) {
-        // await fetch(`http://localhost:5028/api/${roleId}/remove-permission/${permisoId}`, {
-        //   method: 'DELETE',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': `Bearer ${token}`
-        //   }
-        // })
-        console.log(`Eliminando permiso: ${permisoId}`);
+        await fetch(
+          `http://localhost:8085/api/${roleId}/remove-permission/${permisoId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
       }
 
       setShowConfirmation(false);
@@ -143,7 +140,7 @@ export default function RoleModifyForm({
 
   // Filtrar permisos según término de búsqueda
   const filteredPermisos = permisos.filter((permiso) =>
-    permiso.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    permiso.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (isLoading) return <div>Cargando permisos...</div>;
@@ -183,7 +180,7 @@ export default function RoleModifyForm({
                         checked={selectedPermisos.includes(permiso.id)}
                         onChange={() => togglePermiso(permiso.id)}
                       />
-                      <span className="permiso-nombre">{permiso.nombre}</span>
+                      <span className="permiso-nombre">{permiso.name}</span>
                     </label>
                   </div>
                 ))

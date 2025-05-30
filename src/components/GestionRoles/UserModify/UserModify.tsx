@@ -20,7 +20,6 @@ interface UserModifyProps {
 export default function UserModify({
   setModifyForm,
   userEmail,
-  userId,
 }: UserModifyProps) {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,7 +28,6 @@ export default function UserModify({
   const [isLoading, setIsLoading] = useState(true);
   const { userData } = useAuth();
 
-  // Simular carga de roles desde backend
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -40,25 +38,21 @@ export default function UserModify({
         }
         //Hacer fetch al rol utilizando el roleID del user Data
         // Petición al endpoint para obtener todos los roles
-        /*  const response = await fetch('http://localhost:5028/api/users/GetallRoles', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        })
+        const response = await fetch(
+          "http://localhost:8085/api/users/GetallRoles",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!response.ok) {
-          throw new Error('Error al obtener roles')
-        }*/
+          throw new Error("Error al obtener roles");
+        }
         //mandarle el token
-        // const data:Rol[] = reponse;
-        // Datos de ejemplo
-        const data: Rol[] = [
-          { id: "1", nombre: "Administrador" },
-          { id: "2", nombre: "Editor" },
-          { id: "3", nombre: "Consultor" },
-          { id: "4", nombre: "Invitado" },
-        ];
+        const data: Rol[] = await response.json();
 
         setRoles(data);
       } catch (error) {
@@ -87,17 +81,27 @@ export default function UserModify({
 
   const confirmChanges = async () => {
     try {
-      const email = userData?.email;
-      console.log(email);
-      //const token = authService.getToken()
-      /*
-      await fetch(`/api/users/${userId}/role`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rolId: selectedRolId })
-      })
-      */
-      console.log(`Asignando rol ${selectedRolId} al usuario ${userId}`);
+      const token = authService.getToken();
+      if (!token) {
+        throw new Error("No se encontró token de autenticación");
+      }
+
+      const response = await fetch(
+        `http://localhost:8085/api/users/updaterole/${userData?.userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ newRoleId: selectedRolId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al actualizar el rol");
+      }
 
       setShowConfirmation(false);
       setModifyForm(false);

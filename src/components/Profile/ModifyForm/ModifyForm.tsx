@@ -1,99 +1,99 @@
-import { useState } from 'react'
-import { Form } from '../../Forms/Form/Form'
-import FormCard from '../../Forms/FormCard/FormCard'
-import Field from '../../Forms/Field/Field'
-import FormButton from '../../Forms/FormButton/FormButton'
-import './ModifyForm.css'
+import { useState } from "react";
+import { Form } from "../../Forms/Form/Form";
+import FormCard from "../../Forms/FormCard/FormCard";
+import Field from "../../Forms/Field/Field";
+import FormButton from "../../Forms/FormButton/FormButton";
+import "./ModifyForm.css";
+import { authService } from "../../services/authService";
+import { useAuth } from "../../context/AuthContext";
 
 interface ProfileData {
-  nombre: string
-  apellido: string
-  fechaNacimiento: string
-  correo: string
-  telefono: string
-  direccion: string
-  fechaIngreso: string
+  name: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
 }
 
 interface FloatingFormProps {
-  setModifyForm: (value: boolean) => void
-  nombre: string
-  apellido: string
-  fechaNacimiento: string
-  correo: string
-  telefono: string
-  direccion: string
-  fechaIngreso: string
+  setModifyForm: (value: boolean) => void;
+  nombre: string;
+  apellido: string;
+  correo: string;
+  telefono: string;
+  direccion: string;
 }
 
 export default function ModifyForm({
   setModifyForm,
   nombre,
   apellido,
-  fechaNacimiento,
   correo,
   telefono,
   direccion,
-  fechaIngreso,
 }: FloatingFormProps) {
-  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
-    nombre: nombre,
-    apellido: apellido,
-    fechaNacimiento: fechaNacimiento,
-    correo: correo,
-    telefono: telefono,
-    direccion: direccion,
-    fechaIngreso: fechaIngreso,
-  })
+    name: nombre,
+    lastName: apellido,
+    email: correo,
+    phone: telefono,
+    address: direccion,
+  });
+  const { userData } = useAuth();
 
   const handleInputChange = (field: keyof ProfileData) => (value: string) => {
     setProfileData((prev) => ({
       ...prev,
       [field]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = () => {
-    setShowConfirmation(true)
-  }
+    setShowConfirmation(true);
+  };
 
   const confirmChanges = async () => {
     try {
-      /*const token = authService.getToken();
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
+      const token = authService.getToken();
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
 
-    // Enviar todos los permisos seleccionados en una sola petición POST
-    const responseAdd = await fetch(`http://localhost:5028/api/update/${userId}`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        permissionsToAdd: selectedPermisos,
-        permissionsToRemove: remove
-      })
-    });
+      const dataToSend: ProfileData = {
+        name: profileData.name,
+        lastName: profileData.lastName,
+        email: profileData.email,
+        phone: profileData.phone,
+        address: profileData.address,
+      };
 
-    if (!responseAdd.ok) {
-      throw new Error('Error al actualizar los permisos');
-    }
+      // Enviar todos los permisos seleccionados en una sola petición POST
+      const responseAdd = await fetch(
+        `http://localhost:5028/api/update/${userData?.userId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(dataToSend),
+        }
+      );
 
-    const result = await responseAdd.json();
-    console.log('Permisos actualizados correctamente:', result);
-*/
-      setShowConfirmation(false)
-      setModifyForm(false)
+      if (!responseAdd.ok) {
+        throw new Error("Error al actualizar usuario");
+      }
+
+      setShowConfirmation(false);
+      setModifyForm(false);
     } catch (error) {
-      console.error('Error al guardar permisos:', error)
+      console.error("Error al guardar permisos:", error);
     }
-  }
+  };
   const cancelChanges = () => {
-    setShowConfirmation(false)
-  }
+    setShowConfirmation(false);
+  };
 
   return (
     <>
@@ -113,41 +113,34 @@ export default function ModifyForm({
             <Field
               name="Nombre completo"
               placeHolder="tu nombre"
-              value={profileData.nombre}
-              setValue={handleInputChange('nombre')}
+              value={profileData.name}
+              setValue={handleInputChange("name")}
             />
             <Field
               name="Apellido"
               placeHolder="Tu apellido"
-              value={profileData.apellido}
-              setValue={handleInputChange('apellido')}
+              value={profileData.lastName}
+              setValue={handleInputChange("lastName")}
             />
-            <Field
-              name="Fecha de nacimiento"
-              placeHolder="fecha de nacimiento (DD/MM/AAAA)"
-              value={profileData.fechaNacimiento}
-              setValue={handleInputChange('fechaNacimiento')}
-            />
-
             <Field
               name="Correo electrónico"
               placeHolder="correo electrónico"
-              value={profileData.correo}
-              setValue={handleInputChange('correo')}
+              value={profileData.email}
+              setValue={handleInputChange("email")}
             />
 
             <Field
               name="Teléfono"
               placeHolder="teléfono"
-              value={profileData.telefono}
-              setValue={handleInputChange('telefono')}
+              value={profileData.phone}
+              setValue={handleInputChange("phone")}
             />
 
             <Field
               name="Dirección"
               placeHolder="dirección"
-              value={profileData.direccion}
-              setValue={handleInputChange('direccion')}
+              value={profileData.address}
+              setValue={handleInputChange("address")}
             />
           </div>
 
@@ -162,7 +155,9 @@ export default function ModifyForm({
           <div className="confirmation-box">
             <h4>¿Confirmar cambios?</h4>
             <br />
-            <p>¿Estás seguro de que deseas actualizar tu información de perfil?</p>
+            <p>
+              ¿Estás seguro de que deseas actualizar tu información de perfil?
+            </p>
             <div className="confirmation-buttons">
               <FormButton text="Confirmar" handle={confirmChanges} />
               <FormButton text="Cancelar" handle={cancelChanges} />
@@ -171,5 +166,5 @@ export default function ModifyForm({
         </div>
       )}
     </>
-  )
+  );
 }
