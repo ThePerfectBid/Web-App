@@ -21,23 +21,20 @@ export default function RoleModifyForm({
 }: RoleFormProps) {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [allPermisos, setAllPermisos] = useState<Permiso[]>([]);
-  const [currentPermisos, setCurrentPermisos] = useState<string[]>([]);
+  const [permisos, setPermisos] = useState<Permiso[]>([]);
   const [selectedPermisos, setSelectedPermisos] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Cargar todos los permisos y los permisos actuales del rol
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPermisos = async () => {
       try {
         const token = authService.getToken();
         if (!token) {
-          throw new Error("No se encontró token de autenticación");
+          throw new Error("No authentication token found");
         }
 
-        // Obtener todos los permisos disponibles
-        const permisosResponse = await fetch(
+        // 1. Obtener todos los permisos disponibles
+        const response = await fetch(
           "http://localhost:8085/api/users/allPermissions",
           {
             method: "GET",
@@ -48,13 +45,14 @@ export default function RoleModifyForm({
           }
         );
 
-        if (!permisosResponse.ok) {
-          throw new Error("Error al obtener todos los permisos");
+        if (!response.ok) {
+          throw new Error("Error al obtener permisos");
         }
-        const permisosData: Permiso[] = await permisosResponse.json();
 
-        // Obtener permisos actuales del rol
-        const rolPermisosResponse = await fetch(
+        const data: Permiso[] = await response.json();
+
+        // 2. Obtener permisos actuales del rol
+        const response2 = await fetch(
           `http://localhost:8085/api/users/${roleId}/permissions`,
           {
             method: "GET",
@@ -65,24 +63,23 @@ export default function RoleModifyForm({
           }
         );
 
-        if (!rolPermisosResponse.ok) {
+        if (!response2.ok) {
           throw new Error("Error al obtener permisos del rol");
         }
-        const rolPermisosData: Permiso[] = await rolPermisosResponse.json();
 
-        setAllPermisos(permisosData);
-        const currentPermisoIds = rolPermisosData.map((p) => p.id);
-        setCurrentPermisos(currentPermisoIds);
-        setSelectedPermisos(currentPermisoIds);
+        const data2: Permiso[] = await response2.json();
+
+        // 3. Marcar los permisos actuales del rol
+        setPermisos(data);
+        setSelectedPermisos(data2.map((p) => p.id)); // Aquí se marcan los checkboxes
       } catch (error) {
-        console.error("Error al cargar datos:", error);
-        setError(error instanceof Error ? error.message : "Error desconocido");
+        console.error("Error fetching permisos:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchData();
+    fetchPermisos();
   }, [roleId]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,20 +105,10 @@ export default function RoleModifyForm({
         throw new Error("No se encontró token de autenticación");
       }
 
-      // Determinar permisos a agregar (seleccionados que no estaban)
-      const permisosToAdd = selectedPermisos.filter(
-        (id) => !currentPermisos.includes(id)
-      );
-
-      // Determinar permisos a eliminar (estaban pero no están seleccionados)
-      const permisosToRemove = currentPermisos.filter(
-        (id) => !selectedPermisos.includes(id)
-      );
-
-      // Enviar permisos a agregar
-      for (const permisoId of permisosToAdd) {
-        const response = await fetch(
-          `http://localhost:8085/api/users/${roleId}/permissions/${permisoId}`,
+      // 1. Agregar permisos seleccionados
+      for (const permisoId of selectedPermisos) {
+        await fetch(
+          `http://localhost:8085/api/${roleId}/add-permission/${permisoId}`,
           {
             method: "POST",
             headers: {
@@ -130,16 +117,16 @@ export default function RoleModifyForm({
             },
           }
         );
-
-        if (!response.ok) {
-          throw new Error(`Error al agregar permiso ${permisoId}`);
-        }
       }
 
-      // Enviar permisos a eliminar
-      for (const permisoId of permisosToRemove) {
-        const response = await fetch(
-          `http://localhost:8085/api/users/${roleId}/permissions/${permisoId}`,
+      // 2. Eliminar permisos no seleccionados
+      const permisosAEliminar = permisos
+        .filter((p) => !selectedPermisos.includes(p.id))
+        .map((p) => p.id);
+
+      for (const permisoId of permisosAEliminar) {
+        await fetch(
+          `http://localhost:8085/api/${roleId}/remove-permission/${permisoId}`,
           {
             method: "DELETE",
             headers: {
@@ -148,18 +135,12 @@ export default function RoleModifyForm({
             },
           }
         );
-
-        if (!response.ok) {
-          throw new Error(`Error al eliminar permiso ${permisoId}`);
-        }
       }
 
       setShowConfirmation(false);
       setModifyForm(false);
     } catch (error) {
-      console.error("Error al actualizar permisos:", error);
-      setError("Error al guardar los cambios. Intente nuevamente.");
-      setShowConfirmation(false);
+      console.error("Error al guardar permisos:", error);
     }
   };
 
@@ -168,12 +149,11 @@ export default function RoleModifyForm({
   };
 
   // Filtrar permisos según término de búsqueda
-  const filteredPermisos = allPermisos.filter((permiso) =>
+  const filteredPermisos = permisos.filter((permiso) =>
     permiso.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (isLoading) return <div className="loading">Cargando permisos...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  if (isLoading) return <div>Cargando permisos...</div>;
 
   return (
     <>
@@ -185,8 +165,8 @@ export default function RoleModifyForm({
           setModifyForm={setModifyForm}
         >
           <FormCard
-            cardTitle="Gestión de permisos del rol"
-            text="Marque/desmarque los permisos según sea necesario"
+            cardTitle="Seleccione permisos para el rol"
+            text="Por favor selecciona los permisos deseados para el rol"
           />
 
           <div className="Form-content">
@@ -230,23 +210,8 @@ export default function RoleModifyForm({
         <div className="confirmation-overlay">
           <div className="confirmation-box">
             <h4>¿Confirmar cambios?</h4>
-            <p>Se aplicarán los siguientes cambios:</p>
-            <ul className="changes-list">
-              {selectedPermisos
-                .filter((id) => !currentPermisos.includes(id))
-                .map((id) => (
-                  <li key={`add-${id}`}>
-                    [+] Agregar: {allPermisos.find((p) => p.id === id)?.name}
-                  </li>
-                ))}
-              {currentPermisos
-                .filter((id) => !selectedPermisos.includes(id))
-                .map((id) => (
-                  <li key={`remove-${id}`}>
-                    [-] Eliminar: {allPermisos.find((p) => p.id === id)?.name}
-                  </li>
-                ))}
-            </ul>
+            <br />
+            <p>¿Estás seguro de que deseas actualizar los permisos del Rol?</p>
             <div className="confirmation-buttons">
               <FormButton text="Confirmar" handle={confirmChanges} />
               <FormButton text="Cancelar" handle={cancelChanges} />
