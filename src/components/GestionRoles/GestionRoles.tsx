@@ -26,36 +26,13 @@ export default function GestionRoles() {
       try {
         //Obtencion de token
         const token = authService.getToken();
-        // Petición al endpoint para obtener todos los roles
-        const response = await fetch(
-          "http://localhost:8085/api/users/GetallRoles",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
 
-        if (!response.ok) {
-          throw new Error("Error al obtener roles");
-        }
-
-        const roles = await response.json();
-
-        // Buscamos el rol del usuario actual
-        const userRole = roles.find(
-          (role: any) => role.id === userData?.roleId
-        );
-
-        if (!userRole) {
-          setIsAdmin(false);
-          return;
+        if (!token) {
+          throw new Error("No authentication token found");
         }
 
         // Verificar si el usuario tiene rol de administrador
-        setIsAdmin(userRole === "6818b6ff035415cfcd8aa229");
+        setIsAdmin(userData?.roleId === "6818b6ff035415cfcd8aa229");
       } catch (error) {
         console.error("Error verificando roles:", error);
         navigate("/login");
