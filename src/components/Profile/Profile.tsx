@@ -103,6 +103,7 @@ export default function Profile() {
           {/* Header Section (15%) */}
           <div className="header">
             <h2>Mi Perfil</h2>
+            <p>{role}</p>
           </div>
 
           {/* Profile Section (25%) */}

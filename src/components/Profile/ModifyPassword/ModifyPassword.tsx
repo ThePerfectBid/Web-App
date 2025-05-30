@@ -71,7 +71,7 @@ export default function ModifyPassword({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          newPassword: passwords.newPassword,
+          password: passwords.newPassword,
         }),
       });
 
