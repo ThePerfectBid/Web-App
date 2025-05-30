@@ -1,4 +1,4 @@
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Field from "../Forms/Field/Field";
 import { Form } from "../Forms/Form/Form";
 import FormCard from "../Forms/FormCard/FormCard";
@@ -6,7 +6,7 @@ import "./Register.css";
 import FormButton from "../Forms/FormButton/FormButton";
 import { useState } from "react";
 
-export default function Register(params: any) {
+export default function Register() {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");

@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./Field.css";
 
 export default function Field(params: any) {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, _setShowPassword] = useState(false);
 
   return (
     <div className="field">
