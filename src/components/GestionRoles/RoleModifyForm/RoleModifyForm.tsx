@@ -68,7 +68,7 @@ export default function RoleModifyForm({
         }
 
         const data2: Permiso[] = await response2.json();
-
+        console.log(data2);
         // 3. Marcar los permisos actuales del rol
         setPermisos(data);
         setSelectedPermisos(data2.map((p) => p.id)); // Aquí se marcan los checkboxes
@@ -105,6 +105,7 @@ export default function RoleModifyForm({
         throw new Error("No se encontró token de autenticación");
       }
 
+      console.log(permisos);
       // 1. Agregar permisos seleccionados
       for (const permisoId of selectedPermisos) {
         await fetch(
@@ -126,7 +127,7 @@ export default function RoleModifyForm({
 
       for (const permisoId of permisosAEliminar) {
         await fetch(
-          `http://localhost:8085/api/${roleId}/remove-permission/${permisoId}`,
+          `http://localhost:8085/api/users/${roleId}/remove-permission/${permisoId}`,
           {
             method: "DELETE",
             headers: {
