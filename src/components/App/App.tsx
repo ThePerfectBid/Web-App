@@ -10,10 +10,10 @@ import { AuthProvider } from "../context/AuthContext";
 import { ProtectedRoute } from "./ProtectedRoute";
 import ErrorPage from "../Error/ErrorPage";
 import GestionProductos from "../GestionProductos/GestionProductos";
+import GestionSubastas from "../GestionSubastas/GestionSubastas";
 
 const AppRoutes = () => {
   let element = useRoutes([
-    // Rutas públicas
     { path: "/", element: <LogIn /> },
     { path: "/login", element: <LogIn /> },
     { path: "/register", element: <Register /> },
@@ -47,6 +47,7 @@ const AppRoutes = () => {
           element: <GestionRoles />,
         },
         { path: "gestion-productos", element: <GestionProductos /> },
+        { path: "gestion-subastas", element: <GestionSubastas /> },
       ],
     },
 
