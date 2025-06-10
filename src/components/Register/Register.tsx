@@ -94,6 +94,7 @@ export default function Register() {
         roleName = "6818b7af035415cfcd8aa22a";
       }
 
+      /*
       const response = await fetch("http://localhost:44335/register", {
         method: "POST",
         headers: {
@@ -114,7 +115,7 @@ export default function Register() {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error en el registro");
       }
-
+*/
       // Redirigir después de registro exitoso
       navigate("/");
     } catch (err: any) {

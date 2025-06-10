@@ -20,7 +20,7 @@ export default function Users({ setEditUser, setMarkedUser }: UsersProps) {
         if (!token) {
           throw new Error("No authentication token found");
         }
-
+        /*
         const response = await fetch(
           `http://localhost:8085/api/users/allUsers`,
           {
@@ -36,8 +36,49 @@ export default function Users({ setEditUser, setMarkedUser }: UsersProps) {
           throw new Error("Error al obtener usuarios");
         }
 
-        const data = await response.json();
-
+        const data = await response.json();*/
+        const data: UserI[] = [
+          {
+            id: "usr_001",
+            email: "usuario1@example.com",
+          },
+          {
+            id: "usr_002",
+            email: "usuario2@example.com",
+          },
+          {
+            id: "usr_003",
+            email: "usuario3@example.com",
+          },
+          {
+            id: "usr_004",
+            email: "usuario4@example.com",
+          },
+          {
+            id: "usr_005",
+            email: "usuario5@example.com",
+          },
+          {
+            id: "usr_006",
+            email: "usuario6@example.com",
+          },
+          {
+            id: "usr_007",
+            email: "usuario7@example.com",
+          },
+          {
+            id: "usr_008",
+            email: "usuario8@example.com",
+          },
+          {
+            id: "usr_009",
+            email: "usuario9@example.com",
+          },
+          {
+            id: "usr_010",
+            email: "usuario10@example.com",
+          },
+        ];
         setAllUsers(data);
       } catch (error) {
         console.error("Error fetcheando roles:", error);

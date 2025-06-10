@@ -34,7 +34,16 @@ export default function Profile() {
           throw new Error("No authentication token found");
         }
 
-        const response = await fetch(
+        const data = {
+          id: "12233",
+          name: "Juan",
+          lastName: "Perez",
+          email: "Rarara@gmail.com",
+          phone: "123456789",
+          address: "Calle 123",
+          roleId: "6818b9e5035415cfcd8aa231",
+        };
+        /* const response = await fetch(
           `http://localhost:8085/api/users/getuserbyemail?email=${encodeURIComponent(
             userData?.email || ""
           )}`,
@@ -51,7 +60,7 @@ export default function Profile() {
           throw new Error("Error al obtener usuario");
         }
 
-        const data = await response.json();
+        const data = await response.json();*/
 
         setPersona(data);
 

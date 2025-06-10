@@ -64,6 +64,7 @@ export default function ModifyPassword({
         throw new Error("No se encontró token de autenticación");
       }
 
+      /*
       const response = await fetch(`http://localhost:44335/update-password`, {
         method: "POST",
         headers: {
@@ -78,7 +79,7 @@ export default function ModifyPassword({
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error al actualizar contraseña");
-      }
+      } */
     } catch (error) {
       console.error("Error en confirmChanges:", error);
 
