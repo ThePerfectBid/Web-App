@@ -12,7 +12,7 @@ export default function Menu() {
         <Link to="/gestion-productos" className="menu-link">
           <MenuElement text="Gestión de productos" icon="/Product.svg" />
         </Link>
-        <Link to="/" className="menu-link">
+        <Link to="/gestion-subastas" className="menu-link">
           <MenuElement text="Gestión de subastas" icon="/Marketplace.png" />
         </Link>
       </div>
