@@ -9,9 +9,12 @@ export default function Menu() {
         <h1>The Perfect Bid</h1>
       </div>
       <div className="menu-elements">
-        <MenuElement text="Gestión de productos" icon="/Product.svg" />
-
-        <MenuElement text="Gestión de subastas" icon="/Marketplace.png" />
+        <Link to="/gestion-productos" className="menu-link">
+          <MenuElement text="Gestión de productos" icon="/Product.svg" />
+        </Link>
+        <Link to="/" className="menu-link">
+          <MenuElement text="Gestión de subastas" icon="/Marketplace.png" />
+        </Link>
       </div>
       <div className="settings">
         <Link to="/gestion-roles">
@@ -19,7 +22,9 @@ export default function Menu() {
             <img src="/setting.svg" alt="Settings" />
           </button>
         </Link>
-
+        <Link to="/" className="icon-button">
+          <img src="/exit.svg" alt="Profile" />
+        </Link>
         <Link to="/perfil" className="icon-button">
           <img src="/userprofile.svg" alt="Profile" />
         </Link>

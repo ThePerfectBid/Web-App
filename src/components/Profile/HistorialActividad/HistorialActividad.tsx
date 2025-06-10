@@ -27,7 +27,7 @@ export default function HistorialActividad() {
         if (!token) {
           throw new Error("No se encontró token de autenticación");
         }
-
+        /*
         const response = await fetch(
           `http://localhost:8085/api/users/${userData?.userId}/activity`,
           {
@@ -43,7 +43,59 @@ export default function HistorialActividad() {
           throw new Error("Error al obtener actividades");
         }
 
-        const data = await response.json();
+        const data = await response.json(); */
+
+        const data: Actividad[] = [
+          {
+            id: 1,
+            userId: "user_01a3b5",
+            action: "LOGIN",
+            timestamp: "2023-05-15T10:30:00Z",
+          },
+          {
+            id: 2,
+            userId: "user_01a3b5",
+            action: "USER_UPDATED",
+            timestamp: "2023-05-15T11:45:22Z",
+          },
+          {
+            id: 3,
+            userId: "user_01a3b5",
+            action: "PASSWORD_CHANGED",
+            timestamp: "2023-05-16T09:15:37Z",
+          },
+          {
+            id: 4,
+            userId: "user_01a3b5",
+            action: "LOGIN",
+            timestamp: "2023-05-17T08:07:33Z",
+          },
+          {
+            id: 5,
+            userId: "user_01a3b5",
+            action: "USER_UPDATED",
+            timestamp: "2023-05-18T12:20:10Z",
+          },
+          {
+            id: 6,
+            userId: "user_01a3b5",
+            action: "LOGIN",
+            timestamp: "2023-05-19T14:05:21Z",
+          },
+          {
+            id: 7,
+            userId: "user_01a3b5",
+            action: "PASSWORD_CHANGED",
+            timestamp: "2023-05-20T16:30:45Z",
+          },
+          {
+            id: 8,
+            userId: "user_01a3b5",
+            action: "USER_UPDATED",
+            timestamp: "2023-05-21T10:11:03Z",
+          },
+        ];
+
         setActividades(data); // Guardamos los datos directamente (timestamp como string)
       } catch (error) {
         console.error("Error al obtener actividades:", error);

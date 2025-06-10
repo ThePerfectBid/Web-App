@@ -22,7 +22,7 @@ export default function EditRoles({ setEditRole, setMarked }: EditRolesProps) {
         if (!token) {
           throw new Error("No authentication token found");
         }
-
+        /*
         const response = await fetch(
           "http://localhost:8085/api/users/GetallRoles",
           {
@@ -36,8 +36,49 @@ export default function EditRoles({ setEditRole, setMarked }: EditRolesProps) {
           throw new Error("Error al obtener roles");
         }
 
-        const data = await response.json();
-
+        const data = await response.json();*/
+        const data: RoleI[] = [
+          {
+            id: "role_admin",
+            name: "Administrador",
+          },
+          {
+            id: "role_editor",
+            name: "Editor",
+          },
+          {
+            id: "role_viewer",
+            name: "Lector",
+          },
+          {
+            id: "role_guest",
+            name: "Invitado",
+          },
+          {
+            id: "role_support",
+            name: "Soporte Técnico",
+          },
+          {
+            id: "role_analyst",
+            name: "Analista",
+          },
+          {
+            id: "role_developer",
+            name: "Desarrollador",
+          },
+          {
+            id: "role_manager",
+            name: "Gerente",
+          },
+          {
+            id: "role_auditor",
+            name: "Auditor",
+          },
+          {
+            id: "role_sales",
+            name: "Ventas",
+          },
+        ];
         setAllRoles(data);
       } catch (err) {
         console.error("Error fetching roles:", err);

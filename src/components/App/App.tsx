@@ -9,6 +9,7 @@ import GestionRoles from "../GestionRoles/GestionRoles";
 import { AuthProvider } from "../context/AuthContext";
 import { ProtectedRoute } from "./ProtectedRoute";
 import ErrorPage from "../Error/ErrorPage";
+import GestionProductos from "../GestionProductos/GestionProductos";
 
 const AppRoutes = () => {
   let element = useRoutes([
@@ -45,6 +46,7 @@ const AppRoutes = () => {
           path: "gestion-roles",
           element: <GestionRoles />,
         },
+        { path: "gestion-productos", element: <GestionProductos /> },
       ],
     },
 

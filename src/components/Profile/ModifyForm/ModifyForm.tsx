@@ -55,7 +55,7 @@ export default function ModifyForm({
       if (!token) {
         throw new Error("No authentication token found");
       }
-
+      /*
       const dataToSend: ProfileData = {
         name: profileData.name,
         lastName: profileData.lastName,
@@ -79,7 +79,7 @@ export default function ModifyForm({
       if (!responseAdd.ok) {
         throw new Error("Error al actualizar usuario");
       }
-
+*/
       setShowConfirmation(false);
       setModifyForm(false);
     } catch (error) {
