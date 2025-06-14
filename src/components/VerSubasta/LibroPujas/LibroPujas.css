@@ -1,0 +1,75 @@
+.libro-pujas-subasta-container {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: calc(100% - 40px);
+}
+
+.libro-pujas-subasta-titulo {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #350404;
+  font-size: 18px;
+}
+
+.libro-pujas-subasta-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: 500;
+  font-size: 14px;
+  color: #555;
+}
+
+.libro-pujas-subasta-list {
+  max-height: calc(95% - 50px);
+  overflow-y: auto;
+}
+
+.libro-pujas-subasta-list::-webkit-scrollbar {
+  display: none;
+}
+
+.libro-pujas-subasta-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.libro-pujas-subasta-item:last-child {
+  border-bottom: none;
+}
+
+.libro-pujas-subasta-usuario {
+  color: #350404;
+  font-weight: 500;
+}
+
+.libro-pujas-subasta-monto {
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.libro-pujas-subasta-fecha {
+  color: #555;
+}
+
+.libro-pujas-subasta-badge-auto {
+  background: #bbdefb;
+  color: #0d47a1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.libro-pujas-subasta-badge-manual {
+  background: #c8e6c9;
+  color: #1b5e20;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}

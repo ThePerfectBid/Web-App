@@ -146,3 +146,19 @@
 .d-button:hover {
   background: #b13434;
 }
+
+.pujar-button {
+  padding: 8px;
+  width: 100%;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.pujar-button:hover {
+  background: #3e8e41;
+}

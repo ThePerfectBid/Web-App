@@ -11,6 +11,8 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import ErrorPage from "../Error/ErrorPage";
 import GestionProductos from "../GestionProductos/GestionProductos";
 import GestionSubastas from "../GestionSubastas/GestionSubastas";
+import VerSubasta from "../VerSubasta/VerSubasta";
+import ListaSubastas from "../ListaSubastas/ListaSubastas";
 
 const AppRoutes = () => {
   let element = useRoutes([
@@ -48,6 +50,8 @@ const AppRoutes = () => {
         },
         { path: "gestion-productos", element: <GestionProductos /> },
         { path: "gestion-subastas", element: <GestionSubastas /> },
+        { path: "subastas", element: <ListaSubastas /> },
+        { path: "subastas/:id", element: <VerSubasta /> },
       ],
     },
 

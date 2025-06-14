@@ -1,0 +1,53 @@
+.ver-subasta-container {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.ver-subasta-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ver-subasta-titulo {
+  margin: 0;
+  font-size: 24px;
+  color: #ffffff;
+}
+
+.ver-subasta-estado-badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.ver-subasta-content {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 180px);
+}
+
+.ver-subasta-left-panel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ver-subasta-right-panel {
+  flex: 1;
+}
+
+@media (max-width: 1024px) {
+  .ver-subasta-content {
+    flex-direction: column;
+    height: auto;
+  }
+}

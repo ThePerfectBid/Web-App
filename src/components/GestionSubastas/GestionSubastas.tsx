@@ -6,8 +6,9 @@ import SubastaModifyForm from "./SubastaModifyForm/SubastaModifyForm";
 
 export default function GestionSubastas() {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [subastasData, setSubastasData] = useState<SubastaI[]>([
+  const [subastasData] = useState<SubastaI[]>([
     {
+      id: 1,
       nombre: "Reloj Vintage Rolex",
       descripcion: "Reloj de colección en excelente estado",
       imagen:
@@ -21,6 +22,7 @@ export default function GestionSubastas() {
       estado: "Pending",
     },
     {
+      id: 2,
       nombre: "Pintura Abstracta",
       descripcion: "Obra de arte contemporáneo, firmada por el artista",
       imagen:
@@ -34,19 +36,7 @@ export default function GestionSubastas() {
       estado: "Active",
     },
     {
-      nombre: "Guitarra Clásica",
-      descripcion: "Guitarra española de concierto, madera de cedro",
-      imagen:
-        "https://images.unsplash.com/photo-1511671782779-c97d3d27a5d4?ixlib=rb-4.0.3",
-      precio: 2500,
-      base: 2000,
-      duracion: 24,
-      incremento: 100,
-      precio_reserva: 3000,
-      tipo_subasta: "Instrumentos",
-      estado: "Ended",
-    },
-    {
+      id: 1,
       nombre: "Reloj Vintage Rolex",
       descripcion: "Reloj de colección en excelente estado",
       imagen:
@@ -60,6 +50,7 @@ export default function GestionSubastas() {
       estado: "Pending",
     },
     {
+      id: 2,
       nombre: "Pintura Abstracta",
       descripcion: "Obra de arte contemporáneo, firmada por el artista",
       imagen:
@@ -73,19 +64,7 @@ export default function GestionSubastas() {
       estado: "Active",
     },
     {
-      nombre: "Guitarra Clásica",
-      descripcion: "Guitarra española de concierto, madera de cedro",
-      imagen:
-        "https://images.unsplash.com/photo-1511671782779-c97d3d27a5d4?ixlib=rb-4.0.3",
-      precio: 2500,
-      base: 2000,
-      duracion: 24,
-      incremento: 100,
-      precio_reserva: 3000,
-      tipo_subasta: "Instrumentos",
-      estado: "Ended",
-    },
-    {
+      id: 1,
       nombre: "Reloj Vintage Rolex",
       descripcion: "Reloj de colección en excelente estado",
       imagen:
@@ -99,6 +78,7 @@ export default function GestionSubastas() {
       estado: "Pending",
     },
     {
+      id: 2,
       nombre: "Pintura Abstracta",
       descripcion: "Obra de arte contemporáneo, firmada por el artista",
       imagen:
@@ -110,23 +90,8 @@ export default function GestionSubastas() {
       precio_reserva: 10000,
       tipo_subasta: "Arte",
       estado: "Active",
-    },
-    {
-      nombre: "Guitarra Clásica",
-      descripcion: "Guitarra española de concierto, madera de cedro",
-      imagen:
-        "https://images.unsplash.com/photo-1511671782779-c97d3d27a5d4?ixlib=rb-4.0.3",
-      precio: 2500,
-      base: 2000,
-      duracion: 24,
-      incremento: 100,
-      precio_reserva: 3000,
-      tipo_subasta: "Instrumentos",
-      estado: "Ended",
     },
   ]);
-
-  const handleAddSubasta = (newSubasta: SubastaI) => {};
 
   return (
     <div className="gestion-subastas-container">
@@ -138,8 +103,8 @@ export default function GestionSubastas() {
       </div>
 
       <div className="subastas-grid">
-        {subastasData.map((subasta, index) => (
-          <Subasta key={index} {...subasta} />
+        {subastasData.map((subasta) => (
+          <Subasta key={subasta.id} {...subasta} isAdmin={true} />
         ))}
       </div>
 

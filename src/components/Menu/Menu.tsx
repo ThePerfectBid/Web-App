@@ -15,6 +15,9 @@ export default function Menu() {
         <Link to="/gestion-subastas" className="menu-link">
           <MenuElement text="Gestión de subastas" icon="/Marketplace.png" />
         </Link>
+        <Link to="/subastas" className="menu-link">
+          <MenuElement text="Ver Subastas" icon="/Marketplace.png" />
+        </Link>
       </div>
       <div className="settings">
         <Link to="/gestion-roles">

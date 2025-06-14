@@ -1,7 +1,8 @@
+import { useState } from "react";
+import "./Subasta.css";
+import { useNavigate } from "react-router-dom";
 import FormButton from "../../Forms/FormButton/FormButton";
 import SubastaModifyForm from "../SubastaModifyForm/SubastaModifyForm";
-import "./Subasta.css";
-import { useState } from "react";
 
 export type EstadoSubasta =
   | "Pending"
@@ -12,6 +13,7 @@ export type EstadoSubasta =
   | "Completed";
 
 export interface SubastaI {
+  id?: number;
   nombre: string;
   descripcion: string;
   imagen: string;
@@ -22,9 +24,11 @@ export interface SubastaI {
   precio_reserva: number;
   tipo_subasta: string;
   estado: EstadoSubasta;
+  isAdmin?: boolean;
 }
 
 export default function Subasta({
+  id,
   nombre,
   descripcion,
   imagen,
@@ -35,9 +39,12 @@ export default function Subasta({
   precio_reserva,
   tipo_subasta,
   estado,
+  isAdmin = false,
 }: SubastaI) {
   const [modifyForm, setModifyForm] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState(false);
+  const navigate = useNavigate();
+
   const getEstadoColor = () => {
     switch (estado) {
       case "Active":
@@ -77,6 +84,10 @@ export default function Subasta({
     setDeleteMessage(false);
   };
 
+  const handlePujarClick = () => {
+    navigate(`/subastas/${id}`);
+  };
+
   return (
     <>
       <div className="subasta-compact">
@@ -95,7 +106,6 @@ export default function Subasta({
 
         <div className="subasta-body">
           <p className="descripcion">{descripcion}</p>
-
           <div className="price-info">
             <div className="price-current">
               <span>Puja actual:</span>
@@ -106,7 +116,6 @@ export default function Subasta({
               <span>{formatCurrency(base)}</span>
             </div>
           </div>
-
           <div className="subasta-meta">
             <span className="category">{tipo_subasta}</span>
             <span className="duration">{duracion}h</span>
@@ -114,12 +123,23 @@ export default function Subasta({
         </div>
 
         <div className="edit-buttons">
-          <button className="edit-button" onClick={() => setModifyForm(true)}>
-            Editar
-          </button>
-          <button className="d-button" onClick={deleteSubasta}>
-            Delete
-          </button>
+          {isAdmin ? (
+            <>
+              <button
+                className="edit-button"
+                onClick={() => setModifyForm(true)}
+              >
+                Editar
+              </button>
+              <button className="d-button" onClick={deleteSubasta}>
+                Delete
+              </button>
+            </>
+          ) : (
+            <button className="pujar-button" onClick={handlePujarClick}>
+              Pujar
+            </button>
+          )}
         </div>
       </div>
 
@@ -142,9 +162,8 @@ export default function Subasta({
       {deleteMessage && (
         <div className="confirmation-overlay">
           <div className="confirmation-box">
-            <h4>¿Confirmar eliminacion?</h4>
-            <br />
-            <p>Estas seguro de que deseas eliminar esta subasta? </p>
+            <h4>¿Confirmar eliminación?</h4>
+            <p>¿Estás seguro de que deseas eliminar esta subasta?</p>
             <div className="confirmation-buttons">
               <FormButton text="Confirmar" handle={confirmChanges} />
               <FormButton text="Cancelar" handle={cancelChanges} />
